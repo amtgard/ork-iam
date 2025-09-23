@@ -1,9 +1,8 @@
 <?php
 
-namespace Amtgard\IAM\Definitions\ORN;
+namespace Amtgard\IAM\ORN\Definitions;
 
 use Amtgard\IAM\Allowance\Claim;
-use AttendanceFormat;
 
 class AttendanceClaim extends Claim
 {

@@ -1,5 +1,3 @@
-<?php
-
 namespace Amtgard\IAM\ORN\Definitions;
 
 use Amtgard\IAM\Allowance\Claim;

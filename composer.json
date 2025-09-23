@@ -1,0 +1,31 @@
+{
+  "name"  : "amtgard/ork-iam",
+  "type"  : "library",
+  "homepage": "https://github.com/amtgard/active-record-orm",
+  "license" : "MIT",
+  "description": "Amtgard ORK IAM",
+  "require-dev": {
+    "phake/phake": "^4.5",
+    "phpunit/phpunit": "^11.3"
+  },
+  "require": {
+    "php": "^8.3",
+    "ext-json": "*",
+    "monolog/monolog": "^3.7",
+    "amtgard/phpunit-extensions": "^1.0",
+    "amtgard/builder-traits": "^2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Amtgard\\IAM\\": "./src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Amtgard\\IAM\\": "./tests/"
+    }
+  },
+  "bin": [
+    "./bin/"
+  ]
+}

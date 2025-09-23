@@ -1,9 +1,8 @@
 <?php
 
-namespace Amtgard\IAM\Definitions\ORN;
+namespace Amtgard\IAM\ORN\Definitions;
 
 use Amtgard\IAM\Requirement\Requirement;
-use AttendanceFormat;
 
 class AttendanceRequirement extends Requirement
 {

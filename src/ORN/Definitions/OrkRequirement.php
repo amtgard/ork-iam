@@ -1,23 +1,17 @@
 <?php
 
-namespace Amtgard\IAM\Definitions\ORN;
+namespace Amtgard\IAM\ORN\Definitions;
 
-use Amtgard\IAM\Requirement\Requirement;use OrkFormat;
+use Amtgard\IAM\Requirement\Requirement;
 
 class OrkRequirement extends Requirement
 {
 
-    /**
-     * @inheritDoc
-     */
     protected function serviceFormat(): array
     {
         return OrkFormat::serviceFormat();
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function getResourceMap(string $resource = null): array
     {
         return OrkFormat::getValidResourceMap($resource);

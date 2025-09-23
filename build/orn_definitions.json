@@ -1,0 +1,15 @@
+{
+  "Attendance": {
+    "format": [ "Configuration", "Game", "Kingdom", "Park", "Event", "EventInstance" ],
+    "resourceMap": {
+      "ORK": [ "AddAttendance", "SetAttendance", "RemoveAttendance" ],
+      "Classes": [ "GetClasses", "SetClass" ]
+    }
+  },
+  "Ork": {
+    "format": [ "Configuration", "Game", "Kingdom", "Park", "Event" ],
+    "resourceMap": {
+      "ORK": [ "AddKingdom" ]
+    }
+  }
+}
