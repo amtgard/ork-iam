@@ -14,4 +14,9 @@ class ClaimFactoryTest extends TestCase
         $orn = ClaimFactory::createOrn("Attendance:1:2:3:4:5:6:ORK/AddAttendance");
         assertEquals(new AttendanceClaim(OrkService::Attendance, "Attendance:1:2:3:4:5:6:ORK/AddAttendance"), $orn);
     }
+
+    public function testCreateOrnClaim_withGlob() {
+        $orn = ClaimFactory::createOrn("Attendance:*::::::*");
+        assertEquals(new AttendanceClaim(OrkService::Attendance, "Attendance:*::::::*"), $orn);
+    }
 }

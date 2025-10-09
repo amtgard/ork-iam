@@ -65,7 +65,7 @@ abstract class OrkResourceName
     protected abstract function buildProviso(\Amtgard\IAM\OrkService $service, string|int $id): Proviso;
 
     protected function getOrnMatcher(\Amtgard\IAM\OrkService $service): string {
-        $matcher = '/^' . $service->name . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
+        $matcher = '/^' . $service->name . ':(\d+:|:|\*:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
         return $matcher;
     }
 

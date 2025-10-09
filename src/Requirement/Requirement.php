@@ -58,6 +58,11 @@ abstract class Requirement extends OrkResourceName
         return false;
     }
 
+    protected function getOrnMatcher(\Amtgard\IAM\OrkService $service): string {
+        $matcher = '/^' . $service->name . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
+        return $matcher;
+    }
+
     function allowsGrant(Proviso $grant): bool {
         if (in_array($grant->getService(), $this->serviceFormat())) {
             $condition = $this->getProviso($grant->getService());
