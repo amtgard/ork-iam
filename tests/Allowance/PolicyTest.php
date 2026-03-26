@@ -31,7 +31,7 @@ class PolicyTest extends TestCase
 
         $policy = new Policy([$claim2, $claim3, $claim4]);
         $requirement = new OrkRequirement(OrkService::ORK, "ORK:1:7:8:9:10:ORK/AddKingdom");
-        self::assertFalse($policy->grants($requirement));
+        self::assertFalse($policy->isAuthorized($requirement));
     }
 
     public function testWhenAnyRequirementAllows_thenPolicyGrants() {
@@ -43,6 +43,6 @@ class PolicyTest extends TestCase
 
         $policy = new Policy([$claim1, $claim2, $claim3, $claim4]);
         $requirement = new OrkRequirement(OrkService::ORK, "ORK:1:7:8:9:10:ORK/AddKingdom");
-        self::assertTrue($policy->grants($requirement));
+        self::assertTrue($policy->isAuthorized($requirement));
     }
 }
