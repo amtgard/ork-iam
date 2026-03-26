@@ -16,7 +16,7 @@ class Policy
         asort($this->claims);
     }
 
-    public function grants(Requirement $requirement): bool {
+    public function isAuthorized(Requirement $requirement): bool {
         foreach ($this->claims as $claim) {
             if ($requirement->allows($claim)) {
                 return true;
@@ -30,6 +30,11 @@ class Policy
         foreach ($this->claims as $orn) {
             $ornSet[] = $orn->buildOrn();
         }
+        sort($ornSet);
         return json_encode($ornSet);
+    }
+
+    public function is(Policy $target): bool {
+        return $this->toJson() === $target->toJson();
     }
 }
