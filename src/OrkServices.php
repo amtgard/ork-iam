@@ -2,7 +2,7 @@
 
 namespace Amtgard\IAM;
 
-enum OrkService: string
+enum OrkServices: string
 {
     // ORK Services
     case ORK = 'ORK';
@@ -29,4 +29,7 @@ enum OrkService: string
     case Forums = 'Forums';
     case Media = 'Media';
     case Errata = 'Errata';
+
+    // Custom
+    case Application = 'Application';
 }

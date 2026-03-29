@@ -4,11 +4,11 @@ namespace Amtgard\IAM;
 
 use Amtgard\IAM\ORN\OrnClassMap;
 
-class ClaimFactory
+class RequirementFactory
 {
     public static function createOrn(string $orn) {
         $service = OrkServices::from(explode(':',$orn, 2)[0]);
-        $ornClass = OrnClassMap::$ORN_CLAIM_MAP[$service->value];
+        $ornClass = OrnClassMap::$ORN_REQUIREMENT_MAP[$service->value];
         return new $ornClass($service, $orn);
     }
 }

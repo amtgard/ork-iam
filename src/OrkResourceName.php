@@ -14,16 +14,16 @@ abstract class OrkResourceName
 
     use Builder;
 
-    protected \Amtgard\IAM\OrkService $service;
+    protected \Amtgard\IAM\OrkServices|string $service;
     protected string $orn;
 
-    public function getService(): \Amtgard\IAM\OrkService
+    public function getService(): \Amtgard\IAM\OrkServices
     {
         return $this->service;
     }
 
     public abstract function setProviso(Proviso $proviso);
-    public abstract function getProviso(\Amtgard\IAM\OrkService $service): Proviso;
+    public abstract function getProviso(\Amtgard\IAM\OrkServices $service): Proviso;
 
     /**
      * @return Proviso[]
@@ -36,7 +36,7 @@ abstract class OrkResourceName
         return $this->resource;
     }
     /**
-     * @return \Amtgard\IAM\OrkService
+     * @return \Amtgard\IAM\OrkServices
      */
     abstract protected function serviceFormat(): array;
 
@@ -62,14 +62,14 @@ abstract class OrkResourceName
         }
     }
 
-    protected abstract function buildProviso(\Amtgard\IAM\OrkService $service, string|int $id): Proviso;
+    protected abstract function buildProviso(\Amtgard\IAM\OrkServices $service, string|int $id): Proviso;
 
-    protected function getOrnMatcher(\Amtgard\IAM\OrkService $service): string {
+    protected function getOrnMatcher(\Amtgard\IAM\OrkServices $service): string {
         $matcher = '/^' . $service->name . ':(\d+:|:|\*:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
         return $matcher;
     }
 
-    protected function validOrnFormat(\Amtgard\IAM\OrkService $service, $orn): bool {
+    protected function validOrnFormat(\Amtgard\IAM\OrkServices $service, $orn): bool {
         $matcher = $this->getOrnMatcher($service);
         return preg_match($matcher, $orn);
     }
@@ -92,7 +92,7 @@ abstract class OrkResourceName
             throw new \InvalidArgumentException("Invalid orn format.");
         }
         $ornParts = explode(':', $this->orn, 2);
-        $this->service = \Amtgard\IAM\OrkService::from($ornParts[0]);
+        $this->service = \Amtgard\IAM\OrkServices::from($ornParts[0]);
         $ornProvisos = explode(':', $ornParts[1]);
         $this->resource = new \Amtgard\IAM\Resource(end($ornProvisos));
         if (!$this->validResource($this->resource)) {
@@ -107,7 +107,7 @@ abstract class OrkResourceName
         }
     }
 
-    public function __construct(\Amtgard\IAM\OrkService $service, string $orn) {
+    public function __construct(\Amtgard\IAM\OrkServices|string $service, string $orn) {
         $this->service = $service;
         $this->orn = $orn;
         $this->init();

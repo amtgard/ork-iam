@@ -2,18 +2,18 @@
 
 namespace Amtgard\IAM\Proviso;
 
-use Amtgard\IAM\OrkService;
+use Amtgard\IAM\OrkServices;
 
 class Grant extends Proviso {
-    private OrkService $service;
+    private OrkServices $service;
     private null|string|int $id;
 
-    public function getService(): OrkService
+    public function getService(): OrkServices
     {
         return $this->service;
     }
 
-    public function setService(OrkService $service)
+    public function setService(OrkServices $service)
     {
         $this->service = $service;
     }

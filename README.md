@@ -33,6 +33,7 @@ A typical method of doing this would be a cryptographic signature of the policy 
 Basic example showing how to parse an ORN into a Claim, define a Requirement, and evaluate it. Also shows simple `Resource` usage.
 
 _Single Claim_
+
 ```php
 <?php
 require __DIR__ . '/vendor/autoload.php';
@@ -40,14 +41,14 @@ require __DIR__ . '/vendor/autoload.php';
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\ORN\Definitions\AttendanceRequirement;
 use Amtgard\IAM\ORN\Definitions\AttendanceClaim;
-use Amtgard\IAM\OrkService;
+use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\Resource;
 
 // Create a Claim instance from an ORN string
 $claim = ClaimFactory::createOrn('Attendance:*::::::ORK/AddAttendance'); // => AttendanceClaim
 
 // Define a Requirement for Attendance on the same ORN pattern
-$requirement = new AttendanceRequirement(OrkService::Attendance, 'Attendance:1:2:3:4:5:6:ORK/AddAttendance');
+$requirement = new AttendanceRequirement(OrkServices::Attendance, 'Attendance:1:2:3:4:5:6:ORK/AddAttendance');
 
 // Evaluate permission
 if ($requirement->allows($claim)) {
