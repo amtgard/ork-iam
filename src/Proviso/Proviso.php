@@ -2,16 +2,16 @@
 
 namespace Amtgard\IAM\Proviso;
 
-use Amtgard\IAM\OrkService;
+use Amtgard\IAM\OrkServices;
 
 abstract class Proviso
 {
-    public abstract function getService(): OrkService;
-    public abstract function setService(OrkService $service);
+    public abstract function getService(): OrkServices;
+    public abstract function setService(OrkServices $service);
 
     public abstract function getId(): null|string|int;
     public abstract function setId(null|string|int $id);
-    public function __construct(OrkService $service, null|string|int $id)
+    public function __construct(OrkServices $service, null|string|int $id)
     {
         $this->setService($service);
         if ((is_string($id) && $id === '*')) {

@@ -8,25 +8,25 @@ namespace Amtgard\IAM\Proviso;
  * In order to have a valid claim (permissions) on
  */
 
-use Amtgard\IAM\OrkService;
+use Amtgard\IAM\OrkServices;
 
 class Condition extends Proviso
 {
 
-    private OrkService $service;
+    private OrkServices $service;
     private null|string|int $id;
 
-    public function getService(): OrkService
+    public function getService(): OrkServices
     {
         return $this->service;
     }
 
-    public function setService(OrkService $service)
+    public function setService(OrkServices $service)
     {
         $this->service = $service;
     }
 
-    protected function getOrnMatcher(OrkService $service): string {
+    protected function getOrnMatcher(OrkServices $service): string {
         $matcher = '/^' . $service->name . ':(\d+:|\*:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
         return $matcher;
     }

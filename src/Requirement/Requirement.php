@@ -4,7 +4,7 @@ namespace Amtgard\IAM\Requirement;
 
 use Amtgard\IAM\Allowance\Claim;
 use Amtgard\IAM\OrkResourceName;
-use Amtgard\IAM\OrkService;
+use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\Proviso\Condition;
 use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\IAM\Resource;
@@ -29,7 +29,7 @@ abstract class Requirement extends OrkResourceName
         $this->conditions[$proviso->getService()->name] = $proviso;
     }
 
-    public function getProviso(OrkService $service): Proviso
+    public function getProviso(OrkServices $service): Proviso
     {
         return $this->conditions[$service->name];
     }
@@ -39,7 +39,7 @@ abstract class Requirement extends OrkResourceName
         return $this->conditions;
     }
 
-    public function buildProviso(OrkService $service, int|string $id): Proviso
+    public function buildProviso(OrkServices $service, int|string $id): Proviso
     {
         return new Condition($service, $id);
     }
@@ -58,7 +58,7 @@ abstract class Requirement extends OrkResourceName
         return false;
     }
 
-    protected function getOrnMatcher(\Amtgard\IAM\OrkService $service): string {
+    protected function getOrnMatcher(\Amtgard\IAM\OrkServices $service): string {
         $matcher = '/^' . $service->name . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
         return $matcher;
     }

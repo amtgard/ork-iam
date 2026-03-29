@@ -2,7 +2,7 @@
 
 namespace Amtgard\IAM\ORN\Definitions;
 
-use Amtgard\IAM\OrkService;
+use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\ORNFormat;
 
 class AttendanceFormat extends ORNFormat
@@ -11,12 +11,12 @@ class AttendanceFormat extends ORNFormat
     public static function serviceFormat(): array
     {
         return [
-            OrkService::Configuration,
-            OrkService::Game,
-            OrkService::Kingdom,
-            OrkService::Park,
-            OrkService::Event,
-            OrkService::EventInstance,
+            OrkServices::Configuration,
+            OrkServices::Game,
+            OrkServices::Kingdom,
+            OrkServices::Park,
+            OrkServices::Event,
+            OrkServices::EventInstance,
         ];
     }
 
