@@ -108,3 +108,8 @@ Run the test suite:
 vendor/bin/phpunit
 ```
 
+Run with code coverage:
+```bash
+XDEBUG_MODE=coverage vendor/bin/phpunit -c phpunit.coverage.xml.dist --coverage-text
+```
+

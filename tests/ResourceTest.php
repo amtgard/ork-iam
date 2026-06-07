@@ -12,4 +12,9 @@ class ResourceTest extends TestCase
         $resource = new Resource("resource/procedure");
         assertEquals("resource/procedure", $resource->toString());
     }
+
+    public function testResourceWithoutProcedureToString() {
+        $resource = new Resource("resource");
+        assertEquals("resource", $resource->toString());
+    }
 }

@@ -45,4 +45,23 @@ class PolicyTest extends TestCase
         $requirement = new OrkRequirement(OrkServices::ORK, "ORK:1:7:8:9:10:ORK/AddKingdom");
         self::assertTrue($policy->isAuthorized($requirement));
     }
+
+    public function testIsComparesCanonicalPolicyJson(): void
+    {
+        $claim1 = new OrkClaim(OrkServices::ORK, "ORK:1:::::*");
+        $claim2 = new OrkClaim(OrkServices::ORK, "ORK:2:::::*");
+
+        $policyA = new Policy([$claim1, $claim2]);
+        $policyB = new Policy([$claim2, $claim1]);
+
+        self::assertTrue($policyA->is($policyB));
+    }
+
+    public function testIsReturnsFalseForDifferentPolicies(): void
+    {
+        $policyA = new Policy([new OrkClaim(OrkServices::ORK, "ORK:1:::::*")]);
+        $policyB = new Policy([new OrkClaim(OrkServices::ORK, "ORK:2:::::*")]);
+
+        self::assertFalse($policyA->is($policyB));
+    }
 }

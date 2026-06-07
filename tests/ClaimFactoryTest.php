@@ -19,4 +19,11 @@ class ClaimFactoryTest extends TestCase
         $orn = ClaimFactory::createOrn("Attendance:*::::::*");
         assertEquals(new AttendanceClaim(OrkServices::Attendance, "Attendance:*::::::*"), $orn);
     }
+
+    public function testClaimGetProvisoReturnsConfiguredGrant(): void
+    {
+        $claim = ClaimFactory::createOrn("Attendance:1:2:3:4:5:6:ORK/AddAttendance");
+
+        self::assertEquals(1, $claim->getProviso(OrkServices::Configuration)->getId());
+    }
 }
