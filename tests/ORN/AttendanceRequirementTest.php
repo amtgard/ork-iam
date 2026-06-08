@@ -2,9 +2,9 @@
 
 namespace Tests\Amtgard\IAM\ORN;
 
-use Amtgard\IAM\ORN\Definitions\AttendanceClaim;
-use Amtgard\IAM\ORN\Definitions\AttendanceRequirement;
-use Amtgard\IAM\ORN\Definitions\OrkClaim;
+use Amtgard\IAM\Definitions\ORN\AttendanceClaim;
+use Amtgard\IAM\Definitions\ORN\AttendanceRequirement;
+use Amtgard\IAM\Definitions\ORN\OrkClaim;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\Proviso\Condition;
 use Amtgard\IAM\Proviso\Proviso;

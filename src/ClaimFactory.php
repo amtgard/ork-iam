@@ -8,7 +8,7 @@ class ClaimFactory
 {
     public static function createOrn(string $orn) {
         $service = OrkServices::from(explode(':',$orn, 2)[0]);
-        $ornClass = OrnClassMap::$ORN_CLAIM_MAP[$service->value];
+        $ornClass = OrnClassMap::getClaimClass($service);
         return new $ornClass($service, $orn);
     }
 }

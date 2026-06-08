@@ -2,7 +2,7 @@
 
 namespace Tests\Amtgard\IAM;
 
-use Amtgard\IAM\ORN\Definitions\AttendanceClaim;
+use Amtgard\IAM\Definitions\ORN\AttendanceClaim;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\ClaimFactory;
 use PHPUnit\Framework\TestCase;

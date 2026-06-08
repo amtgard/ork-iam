@@ -3,7 +3,7 @@
 namespace Tests\Amtgard\IAM;
 
 use Amtgard\IAM\Allowance\Policy;
-use Amtgard\IAM\ORN\Definitions\OrkRequirement;
+use Amtgard\IAM\Definitions\ORN\OrkRequirement;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\PolicyFactory;
 use PHPUnit\Framework\TestCase;

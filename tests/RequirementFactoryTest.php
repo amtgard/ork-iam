@@ -2,8 +2,8 @@
 
 namespace Tests\Amtgard\IAM;
 
-use Amtgard\IAM\ORN\Definitions\AttendanceRequirement;
-use Amtgard\IAM\ORN\Definitions\OrkRequirement;
+use Amtgard\IAM\Definitions\ORN\AttendanceRequirement;
+use Amtgard\IAM\Definitions\ORN\OrkRequirement;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\RequirementFactory;
 use PHPUnit\Framework\TestCase;

@@ -2,8 +2,8 @@
 
 namespace Tests\Amtgard\IAM\ORN;
 
-use Amtgard\IAM\ORN\Definitions\OrkClaim;
-use Amtgard\IAM\ORN\Definitions\OrkRequirement;
+use Amtgard\IAM\Definitions\ORN\OrkClaim;
+use Amtgard\IAM\Definitions\ORN\OrkRequirement;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\Proviso\Grant;
 use InvalidArgumentException;

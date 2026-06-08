@@ -4,8 +4,8 @@ namespace Tests\Amtgard\IAM\Allowance;
 
 use Amtgard\IAM\Allowance\Policy;
 use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\ORN\Definitions\OrkClaim;
-use Amtgard\IAM\ORN\Definitions\OrkRequirement;
+use Amtgard\IAM\Definitions\ORN\OrkClaim;
+use Amtgard\IAM\Definitions\ORN\OrkRequirement;
 use PHPUnit\Framework\TestCase;
 
 class PolicyTest extends TestCase
