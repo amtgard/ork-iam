@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2aef751a25528fed646cd96e24db55a1",
+    "content-hash": "d03be922558323fadb3b4d6862121bdf",
     "packages": [
         {
             "name": "amtgard/builder-traits",
@@ -286,6 +286,44 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "amtgard/ork-iam-orn-definitions",
+            "version": "dev-feature/initial-definitions-split",
+            "dist": {
+                "type": "path",
+                "url": "../ork-iam-orn-definitions",
+                "reference": "3e2bf2a573badcc35efda73708baa28b313e17e7"
+            },
+            "require": {
+                "amtgard/ork-iam": "@dev",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "twig/twig": "^3.21"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Amtgard\\IAM\\Definitions\\ORN\\": "src/ORN/"
+                },
+                "files": [
+                    "src/register.php"
+                ]
+            },
+            "scripts": {
+                "build": [
+                    "php bin/buildOrns.php"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "ORN Definitions for ORK Services",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.5.0",
@@ -2186,7 +2224,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "amtgard/ork-iam-orn-definitions": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

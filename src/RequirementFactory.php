@@ -8,7 +8,7 @@ class RequirementFactory
 {
     public static function createOrn(string $orn) {
         $service = OrkServices::from(explode(':',$orn, 2)[0]);
-        $ornClass = OrnClassMap::$ORN_REQUIREMENT_MAP[$service->value];
+        $ornClass = OrnClassMap::getRequirementClass($service);
         return new $ornClass($service, $orn);
     }
 }

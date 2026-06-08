@@ -2,21 +2,49 @@
 
 namespace Amtgard\IAM\ORN;
 
-use Amtgard\IAM\ORN\Definitions\AttendanceClaim;
 use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\ORN\Definitions\AttendanceRequirement;
-use Amtgard\IAM\ORN\Definitions\OrkClaim;
-use Amtgard\IAM\ORN\Definitions\OrkRequirement;
 
-class OrnClassMap {
+class OrnClassMap
+{
+    private static array $claimMap = [];
+    private static array $requirementMap = [];
 
-    public static $ORN_CLAIM_MAP = [
-        OrkServices::Attendance->value => AttendanceClaim::class,
-        OrkServices::ORK->value => OrkClaim::class,
-    ];
+    public static function registerClaim(OrkServices $service, string $claimClass): void
+    {
+        self::$claimMap[$service->value] = $claimClass;
+    }
 
-    public static $ORN_REQUIREMENT_MAP = [
-        OrkServices::Attendance->value => AttendanceRequirement::class,
-        OrkServices::ORK->value => OrkRequirement::class,
-    ];
+    public static function registerRequirement(OrkServices $service, string $requirementClass): void
+    {
+        self::$requirementMap[$service->value] = $requirementClass;
+    }
+
+    public static function getClaimClass(OrkServices $service): string
+    {
+        if (!isset(self::$claimMap[$service->value])) {
+            throw new \InvalidArgumentException(
+                "No claim class registered for service {$service->name}."
+            );
+        }
+
+        return self::$claimMap[$service->value];
+    }
+
+    public static function getRequirementClass(OrkServices $service): string
+    {
+        if (!isset(self::$requirementMap[$service->value])) {
+            throw new \InvalidArgumentException(
+                "No requirement class registered for service {$service->name}."
+            );
+        }
+
+        return self::$requirementMap[$service->value];
+    }
+
+    /** @internal */
+    public static function reset(): void
+    {
+        self::$claimMap = [];
+        self::$requirementMap = [];
+    }
 }

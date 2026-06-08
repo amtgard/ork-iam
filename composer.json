@@ -4,7 +4,17 @@
   "homepage": "https://github.com/amtgard/active-record-orm",
   "license" : "MIT",
   "description": "Amtgard ORK IAM",
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../ork-iam-orn-definitions",
+      "options": {
+        "symlink": true
+      }
+    }
+  ],
   "require-dev": {
+    "amtgard/ork-iam-orn-definitions": "@dev",
     "phake/phake": "^4.5",
     "phpunit/phpunit": "^11.3"
   },
