@@ -92,7 +92,7 @@ class AttendanceRequirementTest extends TestCase
 
     public function testWhenInvalidOrn_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid orn format.");
+        $this->expectExceptionMessage("Invalid custom service identifier 'not_an_orn'");
         new AttendanceRequirement(OrkServices::Attendance, "not_an_orn");
     }
 

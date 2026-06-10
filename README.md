@@ -77,6 +77,35 @@ OrnClassMap::registerRequirement(OrkServices::Attendance, AttendanceRequirement:
 
 A typical approach is a bootstrap file loaded via Composer autoload `files`, the same pattern used by `ork-iam-orn-definitions`.
 
+### Custom service identifiers
+
+An ORN has two distinct service concepts:
+
+1. **Service prefix** — the leading segment (`Attendance` in `Attendance:1:2:…`, or any custom name like `YourService` in `YourService:1:Widget/Read`). This identifies which integrator or product owns the ORN.
+2. **Proviso slots** — the middle segments (`Configuration`, `Game`, `Kingdom`, …). These remain `OrkServices` enum members and are unchanged for custom prefixes.
+
+Built-in prefixes (`Attendance`, `ORK`, …) normalize to `OrkServices` cases. Integrators may also register **custom prefixes** that are not enum members, as long as they match `/^[A-Z][A-Za-z0-9]*$/`. Each prefix maps to its own claim/requirement classes and `serviceFormat()` layout.
+
+```php
+use Amtgard\IAM\ClaimFactory;
+use Amtgard\IAM\ORN\OrnClassMap;
+use MyApp\IAM\YourServiceClaim;
+use MyApp\IAM\YourServiceRequirement;
+
+OrnClassMap::registerClaim('YourService', YourServiceClaim::class);
+OrnClassMap::registerRequirement('YourService', YourServiceRequirement::class);
+
+$claim = ClaimFactory::createOrn('YourService:1:Widget/Read');
+```
+
+Built-in `OrkServices` names cannot be registered via a custom string key — use the enum overload (`OrnClassMap::registerClaim(OrkServices::Attendance, …)`). `OrnClassMap::validateCustomServiceName()` checks that a proposed custom name does not collide with a built-in identifier.
+
+Use `getServiceIdentifier()` on claims and requirements for the prefix string. `getService()` remains available when the prefix maps to a built-in `OrkServices` case.
+
+#### Alternative: `Application` prefix
+
+`OrkServices::Application` exists as a catch-all enum case. An integrator could use `Application:…` ORNs instead of custom string prefixes, but every integrator would share one prefix and therefore one `serviceFormat()` validator — strong per-service ORN validation is not possible. Custom string prefixes are preferred so each integrator can register its own claim/requirement classes and proviso layout.
+
 ## Usage
 
 Examples below assume `amtgard/ork-iam-orn-definitions` is installed. Adjust namespaces if you use custom definition classes.

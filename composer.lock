@@ -288,11 +288,11 @@
     "packages-dev": [
         {
             "name": "amtgard/ork-iam-orn-definitions",
-            "version": "dev-feature/initial-definitions-split",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "../ork-iam-orn-definitions",
-                "reference": "3e2bf2a573badcc35efda73708baa28b313e17e7"
+                "reference": "6a619fa930db875c2a088c3281c7fe26d8840df1"
             },
             "require": {
                 "amtgard/ork-iam": "@dev",

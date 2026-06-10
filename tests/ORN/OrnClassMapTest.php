@@ -40,4 +40,9 @@ class OrnClassMapTest extends TestCase
 
         OrnClassMap::getRequirementClass(OrkServices::Mundane);
     }
+
+    public function testGetClaimClassAcceptsStringKey(): void
+    {
+        self::assertSame(AttendanceClaim::class, OrnClassMap::getClaimClass('Attendance'));
+    }
 }

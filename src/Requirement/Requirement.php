@@ -45,7 +45,7 @@ abstract class Requirement extends OrkResourceName
     }
 
     public function allows(Claim $claim): bool {
-        if ($claim->getService() !== $this->getService()) {
+        if (!$claim->getServiceIdentifier()->equals($this->getServiceIdentifier())) {
             return false;
         }
 
@@ -58,8 +58,8 @@ abstract class Requirement extends OrkResourceName
         return false;
     }
 
-    protected function getOrnMatcher(\Amtgard\IAM\OrkServices $service): string {
-        $matcher = '/^' . $service->name . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
+    protected function getOrnMatcher(\Amtgard\IAM\ServiceIdentifier $service): string {
+        $matcher = '/^' . preg_quote($service->name, '/') . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
         return $matcher;
     }
 

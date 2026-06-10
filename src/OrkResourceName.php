@@ -14,29 +14,37 @@ abstract class OrkResourceName
 
     use Builder;
 
-    protected \Amtgard\IAM\OrkServices|string $service;
+    protected ServiceIdentifier $service;
     protected string $orn;
 
-    public function getService(): \Amtgard\IAM\OrkServices
+    public function getServiceIdentifier(): ServiceIdentifier
     {
         return $this->service;
     }
 
+    public function getService(): OrkServices
+    {
+        return $this->service->toOrkServices()
+            ?? throw new \LogicException(
+                "Service prefix {$this->service->name} is not a built-in OrkServices case."
+            );
+    }
+
     public abstract function setProviso(Proviso $proviso);
-    public abstract function getProviso(\Amtgard\IAM\OrkServices $service): Proviso;
+    public abstract function getProviso(OrkServices $service): Proviso;
 
     /**
      * @return Proviso[]
      */
     public abstract function getProvisos(): array;
 
-    protected \Amtgard\IAM\Resource $resource;
-    public function getResource(): \Amtgard\IAM\Resource
+    protected Resource $resource;
+    public function getResource(): Resource
     {
         return $this->resource;
     }
     /**
-     * @return \Amtgard\IAM\OrkServices
+     * @return OrkServices[]
      */
     abstract protected function serviceFormat(): array;
 
@@ -62,14 +70,14 @@ abstract class OrkResourceName
         }
     }
 
-    protected abstract function buildProviso(\Amtgard\IAM\OrkServices $service, string|int $id): Proviso;
+    protected abstract function buildProviso(OrkServices $service, string|int $id): Proviso;
 
-    protected function getOrnMatcher(\Amtgard\IAM\OrkServices $service): string {
-        $matcher = '/^' . $service->name . ':(\d+:|:|\*:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
+    protected function getOrnMatcher(ServiceIdentifier $service): string {
+        $matcher = '/^' . preg_quote($service->name, '/') . ':(\d+:|:|\*:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
         return $matcher;
     }
 
-    protected function validOrnFormat(\Amtgard\IAM\OrkServices $service, $orn): bool {
+    protected function validOrnFormat(ServiceIdentifier $service, $orn): bool {
         $matcher = $this->getOrnMatcher($service);
         return preg_match($matcher, $orn);
     }
@@ -80,7 +88,7 @@ abstract class OrkResourceName
      */
     protected abstract function getResourceMap(String $resource = null): array;
 
-    protected abstract function validResource(\Amtgard\IAM\Resource $resource): bool;
+    protected abstract function validResource(Resource $resource): bool;
 
     protected function validProvisos(array $provisos): bool {
         return count($provisos) === count($this->serviceFormat());
@@ -88,13 +96,13 @@ abstract class OrkResourceName
 
     #[PostInit]
     public function init() {
+        $ornParts = explode(':', $this->orn, 2);
+        $this->service = ServiceIdentifier::from($ornParts[0]);
         if (!$this->validOrnFormat($this->service, $this->orn)) {
             throw new \InvalidArgumentException("Invalid orn format.");
         }
-        $ornParts = explode(':', $this->orn, 2);
-        $this->service = \Amtgard\IAM\OrkServices::from($ornParts[0]);
         $ornProvisos = explode(':', $ornParts[1]);
-        $this->resource = new \Amtgard\IAM\Resource(end($ornProvisos));
+        $this->resource = new Resource(end($ornProvisos));
         if (!$this->validResource($this->resource)) {
             throw new \InvalidArgumentException("Invalid resource definition.");
         }
@@ -107,8 +115,14 @@ abstract class OrkResourceName
         }
     }
 
-    public function __construct(\Amtgard\IAM\OrkServices|string $service, string $orn) {
-        $this->service = $service;
+    public function __construct(ServiceIdentifier|OrkServices|string $service, string $orn) {
+        if ($service instanceof ServiceIdentifier) {
+            $this->service = $service;
+        } elseif ($service instanceof OrkServices) {
+            $this->service = ServiceIdentifier::from($service->value);
+        } else {
+            $this->service = ServiceIdentifier::from($service);
+        }
         $this->orn = $orn;
         $this->init();
     }
