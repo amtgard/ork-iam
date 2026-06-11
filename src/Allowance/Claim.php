@@ -4,6 +4,8 @@ namespace Amtgard\IAM\Allowance;
 
 use Amtgard\IAM\OrkResourceName;
 use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ProvisoSlot;
 use Amtgard\IAM\Proviso\Grant;
 use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\IAM\Resource;
@@ -28,12 +30,14 @@ abstract class Claim extends OrkResourceName
 
     public function setProviso(Proviso $proviso)
     {
-        $this->grants[$proviso->getService()->name] = $proviso;
+        $this->grants[$proviso->getSegmentLabel()->name] = $proviso;
     }
 
-    public function getProviso(OrkServices $service): Proviso
+    public function getProviso(OrnSegmentLabel|ProvisoSlot|OrkServices|string $slot): Proviso
     {
-        return $this->grants[$service->name];
+        $key = ($slot instanceof OrnSegmentLabel ? $slot : OrnSegmentLabel::from($slot))->name;
+
+        return $this->grants[$key];
     }
 
     public function getProvisos(): array
@@ -41,9 +45,9 @@ abstract class Claim extends OrkResourceName
         return $this->grants;
     }
 
-    protected function buildProviso(OrkServices $service, int|string $id): Proviso
+    protected function buildProviso(OrnSegmentLabel|ProvisoSlot $slot, int|string $id): Proviso
     {
-        return new Grant($service, $id);
+        return new Grant($slot, $id);
     }
 
 }

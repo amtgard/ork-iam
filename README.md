@@ -77,12 +77,28 @@ OrnClassMap::registerRequirement(OrkServices::Attendance, AttendanceRequirement:
 
 A typical approach is a bootstrap file loaded via Composer autoload `files`, the same pattern used by `ork-iam-orn-definitions`.
 
+### ORN ontology
+
+ORK IAM uses a consistent vocabulary for ORN structure. See [docs/ORN-ONTOLOGY.md](docs/ORN-ONTOLOGY.md) for the full glossary and the planned 2.0.0 rename.
+
+| Term | 1.x API | Meaning |
+|------|---------|---------|
+| **Prefix** | `ServiceIdentifier`, `getPrefix()` | Leading segment — who owns the ORN |
+| **Schema** | `ornSegmentSchema()` | Ordered segment labels for a claim/requirement type |
+| **Label** | `Orn\OrnSegmentLabel` | Name of one middle segment in the schema |
+| **Offset** | `segmentOffset()`, `OrnSegmentLabel::offsetIn()` | Zero-based index of a label in the schema |
+| **Value** | `getSegmentValue()` | Parsed ID in one segment (`int`, `*`, or empty) |
+| **Binding** | `Proviso` (`Grant` / `Condition`) | Label + value on a parsed claim or requirement |
+| **Catalog** | `OrkServices` | Built-in registry of known prefix and label names |
+
+Legacy names (`serviceFormat()`, `getProviso()`, `ProvisoSlot`, …) remain available and are deprecated for removal in 2.0.0.
+
 ### Custom service identifiers
 
-An ORN has two distinct service concepts:
+An ORN has two distinct naming layers at the prefix and schema level:
 
-1. **Service prefix** — the leading segment (`Attendance` in `Attendance:1:2:…`, or any custom name like `YourService` in `YourService:1:Widget/Read`). This identifies which integrator or product owns the ORN.
-2. **Proviso slots** — the middle segments (`Configuration`, `Game`, `Kingdom`, …). These remain `OrkServices` enum members and are unchanged for custom prefixes.
+1. **Prefix** — the leading segment (`Attendance` in `Attendance:1:2:…`, or any custom name like `YourService` in `YourService:1:Widget/Read`). This identifies which integrator or product owns the ORN.
+2. **Schema labels** — the ordered middle segments returned by `ornSegmentSchema()` (`Configuration`, `Game`, `Kingdom`, …). Each label names one ORN value segment, not the value itself.
 
 Built-in prefixes (`Attendance`, `ORK`, …) normalize to `OrkServices` cases. Integrators may also register **custom prefixes** that are not enum members, as long as they match `/^[A-Z][A-Za-z0-9]*$/`. Each prefix maps to its own claim/requirement classes and `serviceFormat()` layout.
 
@@ -101,6 +117,25 @@ $claim = ClaimFactory::createOrn('YourService:1:Widget/Read');
 Built-in `OrkServices` names cannot be registered via a custom string key — use the enum overload (`OrnClassMap::registerClaim(OrkServices::Attendance, …)`). `OrnClassMap::validateCustomServiceName()` checks that a proposed custom name does not collide with a built-in identifier.
 
 Use `getServiceIdentifier()` on claims and requirements for the prefix string. `getService()` remains available when the prefix maps to a built-in `OrkServices` case.
+
+#### Custom segment labels
+
+`ornSegmentSchema()` (or legacy `serviceFormat()`) may return `OrkServices` cases, arbitrary strings, or `OrnSegmentLabel` instances. Unlike prefixes, custom label names are not restricted — integrators can use any non-empty string (`tenant-id`, `org unit`, and so on). Strings that exactly match a built-in catalog entry normalize to that `OrkServices` case.
+
+```php
+protected function serviceFormat(): array
+{
+    return [OrkServices::Configuration, 'tenant-id', 'org unit'];
+}
+
+// equivalent preferred form:
+protected function ornSegmentSchema(): array
+{
+    return [OrkServices::Configuration, 'tenant-id', 'org unit'];
+}
+```
+
+For an ORN `YourService:1:42:7:Widget/Read`, the values `1`, `42`, and `7` map to `Configuration`, `tenant-id`, and `org unit` by offset. Use `getSegment('tenant-id')` or `getSegment(OrnSegmentLabel::from('tenant-id'))` to read a binding. `getSegmentLabel()` and `getSegmentValue()` are the preferred accessors on binding objects.
 
 #### Alternative: `Application` prefix
 

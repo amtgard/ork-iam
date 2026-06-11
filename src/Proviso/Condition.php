@@ -9,21 +9,22 @@ namespace Amtgard\IAM\Proviso;
  */
 
 use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Orn\OrnSegmentLabel;
 
 class Condition extends Proviso
 {
 
-    private OrkServices $service;
+    private OrnSegmentLabel $slot;
     private null|string|int $id;
 
-    public function getService(): OrkServices
+    public function getSlot(): OrnSegmentLabel
     {
-        return $this->service;
+        return $this->slot;
     }
 
-    public function setService(OrkServices $service)
+    public function setSlot(OrnSegmentLabel $slot)
     {
-        $this->service = $service;
+        $this->slot = $slot;
     }
 
     protected function getOrnMatcher(OrkServices $service): string {
