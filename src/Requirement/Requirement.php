@@ -5,6 +5,8 @@ namespace Amtgard\IAM\Requirement;
 use Amtgard\IAM\Allowance\Claim;
 use Amtgard\IAM\OrkResourceName;
 use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ProvisoSlot;
 use Amtgard\IAM\Proviso\Condition;
 use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\IAM\Resource;
@@ -26,12 +28,14 @@ abstract class Requirement extends OrkResourceName
 
     public function setProviso(Proviso $proviso)
     {
-        $this->conditions[$proviso->getService()->name] = $proviso;
+        $this->conditions[$proviso->getSegmentLabel()->name] = $proviso;
     }
 
-    public function getProviso(OrkServices $service): Proviso
+    public function getProviso(OrnSegmentLabel|ProvisoSlot|OrkServices|string $slot): Proviso
     {
-        return $this->conditions[$service->name];
+        $key = ($slot instanceof OrnSegmentLabel ? $slot : OrnSegmentLabel::from($slot))->name;
+
+        return $this->conditions[$key];
     }
 
     public function getProvisos(): array
@@ -39,17 +43,17 @@ abstract class Requirement extends OrkResourceName
         return $this->conditions;
     }
 
-    public function buildProviso(OrkServices $service, int|string $id): Proviso
+    public function buildProviso(OrnSegmentLabel|ProvisoSlot $slot, int|string $id): Proviso
     {
-        return new Condition($service, $id);
+        return new Condition($slot, $id);
     }
 
     public function allows(Claim $claim): bool {
-        if (!$claim->getServiceIdentifier()->equals($this->getServiceIdentifier())) {
+        if (!$claim->getPrefix()->equals($this->getPrefix())) {
             return false;
         }
 
-        foreach ($claim->getProvisos() as $grant) {
+        foreach ($claim->getSegments() as $grant) {
             if ($this->allowsGrant($grant)) {
                 return $this->resourceComparison($claim);
             }
@@ -64,9 +68,10 @@ abstract class Requirement extends OrkResourceName
     }
 
     function allowsGrant(Proviso $grant): bool {
-        if (in_array($grant->getService(), $this->serviceFormat())) {
-            $condition = $this->getProviso($grant->getService());
-            return $condition->allows($grant);
+        foreach ($this->ornSegmentLabels() as $label) {
+            if ($grant->getSegmentLabel()->equals($label)) {
+                return $this->getSegment($label)->allows($grant);
+            }
         }
         throw new \InvalidArgumentException("Claim grant could not be matched to a requirement condition.");
     }

@@ -2,6 +2,13 @@
 
 namespace Amtgard\IAM;
 
+/**
+ * Catalog of built-in ORN prefix and segment label names.
+ *
+ * Renamed to {@see \Amtgard\IAM\Catalog\ServiceCatalog} in 2.0.0.
+ *
+ * @see docs/ORN-ONTOLOGY.md
+ */
 enum OrkServices: string
 {
     // ORK Services

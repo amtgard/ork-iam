@@ -5,6 +5,7 @@ namespace Tests\Amtgard\IAM\Proviso;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\Proviso\Condition;
 use Amtgard\IAM\Proviso\Grant;
+use LogicException;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +36,7 @@ class ProvisoTest extends TestCase
     public function testWhenInvalidProvisoId_thenThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid proviso. Proviso must be a integer or the string \'*\'');
+        $this->expectExceptionMessage("Invalid segment value. Value must be an integer or the string '*'");
 
         new Grant(OrkServices::Kingdom, 'invalid');
     }
@@ -62,6 +63,23 @@ class ProvisoTest extends TestCase
         $grant = new Grant(OrkServices::Kingdom, 8);
 
         self::assertFalse($condition->allows($grant));
+    }
+
+    public function testGrantExposesBuiltinSlotViaGetService(): void
+    {
+        $grant = new Grant(OrkServices::Kingdom, 7);
+
+        self::assertEquals(OrkServices::Kingdom, $grant->getService());
+        self::assertEquals('Kingdom', $grant->getSegmentLabel()->name);
+    }
+
+    public function testWhenCustomSlot_thenGetServiceThrows(): void
+    {
+        $grant = new Grant('custom-slot', 7);
+
+        $this->expectException(LogicException::class);
+
+        $grant->getService();
     }
 
     public function testConditionGetOrnMatcher(): void
