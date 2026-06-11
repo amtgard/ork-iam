@@ -5,11 +5,9 @@ namespace Tests\Amtgard\IAM\ORN;
 use Amtgard\IAM\Definitions\ORN\AttendanceClaim;
 use Amtgard\IAM\Definitions\ORN\AttendanceRequirement;
 use Amtgard\IAM\Definitions\ORN\OrkClaim;
-use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\Proviso\Condition;
-use Amtgard\IAM\Proviso\Proviso;
+use Amtgard\IAM\Catalog\ServiceCatalog;
+use Amtgard\IAM\Orn\Condition;
 use InvalidArgumentException;
-use Phake;
 use PHPUnit\Framework\TestCase;
 
 class AttendanceRequirementTest extends TestCase
@@ -19,71 +17,48 @@ class AttendanceRequirementTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->requirement = new AttendanceRequirement(OrkServices::Attendance, self::$ATTENDANCE_ORN);
-
-        $claim = Phake::mock(AttendanceClaim::class);
-        Phake::when($claim)->getServe->thenReturn(OrkServices::Attendance);
-        $configurationGrant = Phake::mock(Proviso::class);
-        Phake::when($configurationGrant)->getService->thenReturn(OrkServices::Configuration);
-        $gameGrant = Phake::mock(Proviso::class);
-        Phake::when($gameGrant)->getService->thenReturn(OrkServices::Game);
-        $kingdomGrant = Phake::mock(Proviso::class);
-        Phake::when($kingdomGrant)->getService->thenReturn(OrkServices::Kingdom);
-        $parkGrant = Phake::mock(Proviso::class);
-        Phake::when($parkGrant)->getService->thenReturn(OrkServices::Park);
-        $eventGrant = Phake::mock(Proviso::class);
-        Phake::when($eventGrant)->getService->thenReturn(OrkServices::Event);
-        $instanceGrant = Phake::mock(Proviso::class);
-        Phake::when($instanceGrant)->getService->thenReturn(OrkServices::EventInstance);
-        Phake::when($claim)->getProvisos()->thenReturn([
-            OrkServices::Configuration->name => $configurationGrant,
-            OrkServices::Game->name => $gameGrant,
-            OrkServices::Kingdom->name => $kingdomGrant,
-            OrkServices::Park->name => $parkGrant,
-            OrkServices::Event->name => $eventGrant,
-            OrkServices::EventInstance->name => $instanceGrant,
-        ]);
+        $this->requirement = new AttendanceRequirement(ServiceCatalog::Attendance, self::$ATTENDANCE_ORN);
     }
 
     public function testConstructor() {
-        self::assertEquals($this->requirement->getService(), OrkServices::Attendance);
-        self::assertEquals((new Condition(OrkServices::Event, "5")), $this->requirement->getProviso(OrkServices::Event));
+        self::assertEquals($this->requirement->toCatalogEntry(), ServiceCatalog::Attendance);
+        self::assertEquals((new Condition(ServiceCatalog::Event, "5")), $this->requirement->getSegment(ServiceCatalog::Event));
     }
 
     public function testWhenProvisoIsGlob_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid orn format.");
-        new AttendanceRequirement(OrkServices::Attendance, "Attendance:1:2:*:4:5::ORK/AddAttendance");
+        new AttendanceRequirement(ServiceCatalog::Attendance, "Attendance:1:2:*:4:5::ORK/AddAttendance");
     }
 
     public function testAllowsExact() {
-        self::assertTrue($this->requirement->allows(new AttendanceClaim(OrkServices::Attendance, self::$ATTENDANCE_ORN)));
+        self::assertTrue($this->requirement->allows(new AttendanceClaim(ServiceCatalog::Attendance, self::$ATTENDANCE_ORN)));
     }
 
     public function testWhenOneMatch_thenAllow() {
         $oneMatchOrn = "Attendance::8:::5::ORK/AddAttendance";
-        self::assertTrue($this->requirement->allows(new AttendanceClaim(OrkServices::Attendance, $oneMatchOrn)));
+        self::assertTrue($this->requirement->allows(new AttendanceClaim(ServiceCatalog::Attendance, $oneMatchOrn)));
     }
 
     public function testWhenRequirement_hasEmptySlots_thenReject() {
-        $requirement = new AttendanceRequirement(OrkServices::Attendance, "Attendance:1:2:3:4:5::ORK/AddAttendance");
+        $requirement = new AttendanceRequirement(ServiceCatalog::Attendance, "Attendance:1:2:3:4:5::ORK/AddAttendance");
         $noMatchOrn = "Attendance::8:::::ORK/AddAttendance";
-        self::assertFalse($requirement->allows(new AttendanceClaim(OrkServices::Attendance, $noMatchOrn)));
+        self::assertFalse($requirement->allows(new AttendanceClaim(ServiceCatalog::Attendance, $noMatchOrn)));
     }
 
     public function testWhenNoMatch_thenReject() {
         $noMatchOrn = "Attendance::8:::::ORK/AddAttendance";
-        self::assertFalse($this->requirement->allows(new AttendanceClaim(OrkServices::Attendance, $noMatchOrn)));
+        self::assertFalse($this->requirement->allows(new AttendanceClaim(ServiceCatalog::Attendance, $noMatchOrn)));
     }
 
     public function testWhenOneMatch_andResourceGlob_thenAllow() {
         $oneMatchOrn = "Attendance:::::5::*";
-        self::assertTrue($this->requirement->allows(new AttendanceClaim(OrkServices::Attendance, $oneMatchOrn)));
+        self::assertTrue($this->requirement->allows(new AttendanceClaim(ServiceCatalog::Attendance, $oneMatchOrn)));
     }
 
     public function testWhenOneMatch_andProcedureGlob_thenAllow() {
         $oneMatchOrn = "Attendance:::::5::ORK/*";
-        self::assertTrue($this->requirement->allows(new AttendanceClaim(OrkServices::Attendance, $oneMatchOrn)));
+        self::assertTrue($this->requirement->allows(new AttendanceClaim(ServiceCatalog::Attendance, $oneMatchOrn)));
     }
 
     public function testBuildOrnReturnsInputString() {
@@ -92,44 +67,44 @@ class AttendanceRequirementTest extends TestCase
 
     public function testWhenInvalidOrn_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid custom service identifier 'not_an_orn'");
-        new AttendanceRequirement(OrkServices::Attendance, "not_an_orn");
+        $this->expectExceptionMessage("Invalid custom ORN prefix 'not_an_orn'");
+        new AttendanceRequirement(ServiceCatalog::Attendance, "not_an_orn");
     }
 
     public function testWhenAlmostValidOrn_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid orn format.");
-        new AttendanceRequirement(OrkServices::Attendance, "Attendance:1:two:3:4:5::ORK/AddAttendance");
+        new AttendanceRequirement(ServiceCatalog::Attendance, "Attendance:1:two:3:4:5::ORK/AddAttendance");
     }
 
     public function testWhenInvalidResource_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid resource definition.");
-        new AttendanceRequirement(OrkServices::Attendance, "Attendance:1::3:4:5::ORK/AddAttendances");
+        new AttendanceRequirement(ServiceCatalog::Attendance, "Attendance:1::3:4:5::ORK/AddAttendances");
     }
 
     public function testGetProvisoReturnsConfiguredGrant(): void
     {
-        $proviso = $this->requirement->getProviso(OrkServices::Event);
+        $proviso = $this->requirement->getSegment(ServiceCatalog::Event);
 
-        self::assertEquals(OrkServices::Event, $proviso->getService());
-        self::assertEquals(5, $proviso->getId());
+        self::assertEquals(ServiceCatalog::Event, $proviso->toCatalogEntry());
+        self::assertEquals(5, $proviso->getValue());
     }
 
     public function testWhenInvalidProvisos_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid proviso set.");
-        new AttendanceRequirement(OrkServices::Attendance, "Attendance:1::3:4::ORK/AddAttendance");
+        $this->expectExceptionMessage("Invalid segment binding set.");
+        new AttendanceRequirement(ServiceCatalog::Attendance, "Attendance:1::3:4::ORK/AddAttendance");
     }
 
     public function testWhenProvisoCountMismatch_thenThrows() {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid proviso set.");
-        new AttendanceRequirement(OrkServices::Attendance, "Attendance:1:2:::ORK/AddAttendance");
+        $this->expectExceptionMessage("Invalid segment binding set.");
+        new AttendanceRequirement(ServiceCatalog::Attendance, "Attendance:1:2:::ORK/AddAttendance");
     }
 
     public function testWhenServiceDoesNotMatch_thenNotAllowed() {
         $wrongService = "ORK::8:::5:ORK/AddKingdom";
-        self::assertFalse($this->requirement->allows(new OrkClaim(OrkServices::ORK, $wrongService)));
+        self::assertFalse($this->requirement->allows(new OrkClaim(ServiceCatalog::ORK, $wrongService)));
     }
 }

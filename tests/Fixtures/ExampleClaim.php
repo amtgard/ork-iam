@@ -3,14 +3,14 @@
 namespace Tests\Amtgard\IAM\Fixtures;
 
 use Amtgard\IAM\Allowance\Claim;
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\Resource;
 
 class ExampleClaim extends Claim
 {
-    protected function serviceFormat(): array
+    public function ornSegmentSchema(): array
     {
-        return [OrkServices::Configuration];
+        return [ServiceCatalog::Configuration];
     }
 
     protected function getResourceMap(?string $resource = null): array

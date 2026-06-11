@@ -6,7 +6,7 @@ use Amtgard\IAM\Requirement\Requirement;
 
 class CustomProvisoRequirement extends Requirement
 {
-    protected function serviceFormat(): array
+    public function ornSegmentSchema(): array
     {
         return ['tenant-id', 'org unit'];
     }

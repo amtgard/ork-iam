@@ -3,38 +3,39 @@
 namespace Amtgard\IAM;
 
 use Amtgard\IAM\ORN\OrnClassMap;
+use Amtgard\IAM\Orn\OrnPrefix;
 
 class OrnServiceResolver
 {
-    public static function resolvePrefix(string $orn): ServiceIdentifier
+    public static function resolvePrefix(string $orn): OrnPrefix
     {
         $parts = explode(':', $orn, 2);
         if (count($parts) < 2) {
             throw new \InvalidArgumentException('Invalid orn format.');
         }
 
-        return ServiceIdentifier::from($parts[0]);
+        return OrnPrefix::from($parts[0]);
     }
 
     /**
-     * @return array{0: ServiceIdentifier, 1: class-string}
+     * @return array{0: OrnPrefix, 1: class-string}
      */
     public static function resolveForClaim(string $orn): array
     {
-        $serviceId = self::resolvePrefix($orn);
-        $class = OrnClassMap::getClaimClass($serviceId->name);
+        $prefix = self::resolvePrefix($orn);
+        $class = OrnClassMap::getClaimClass($prefix->name);
 
-        return [$serviceId, $class];
+        return [$prefix, $class];
     }
 
     /**
-     * @return array{0: ServiceIdentifier, 1: class-string}
+     * @return array{0: OrnPrefix, 1: class-string}
      */
     public static function resolveForRequirement(string $orn): array
     {
-        $serviceId = self::resolvePrefix($orn);
-        $class = OrnClassMap::getRequirementClass($serviceId->name);
+        $prefix = self::resolvePrefix($orn);
+        $class = OrnClassMap::getRequirementClass($prefix->name);
 
-        return [$serviceId, $class];
+        return [$prefix, $class];
     }
 }

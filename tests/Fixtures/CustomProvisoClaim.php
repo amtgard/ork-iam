@@ -7,7 +7,7 @@ use Amtgard\IAM\Resource;
 
 class CustomProvisoClaim extends Claim
 {
-    protected function serviceFormat(): array
+    public function ornSegmentSchema(): array
     {
         return ['tenant-id', 'org unit'];
     }

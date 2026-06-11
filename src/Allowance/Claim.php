@@ -3,11 +3,10 @@
 namespace Amtgard\IAM\Allowance;
 
 use Amtgard\IAM\OrkResourceName;
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Catalog\ServiceCatalog;
+use Amtgard\IAM\Orn\Grant;
+use Amtgard\IAM\Orn\OrnSegment;
 use Amtgard\IAM\Orn\OrnSegmentLabel;
-use Amtgard\IAM\ProvisoSlot;
-use Amtgard\IAM\Proviso\Grant;
-use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\IAM\Resource;
 use Amtgard\Traits\Builder\Builder;
 
@@ -15,9 +14,7 @@ abstract class Claim extends OrkResourceName
 {
     use Builder;
 
-    /**
-     * @var Grant[]
-     */
+    /** @var Grant[] */
     private array $grants = [];
 
     protected function validResource(Resource $resource): bool
@@ -28,26 +25,25 @@ abstract class Claim extends OrkResourceName
                     in_array($resource->procedure, $this->getResourceMap($resource->resource))));
     }
 
-    public function setProviso(Proviso $proviso)
+    public function setSegment(OrnSegment $binding): void
     {
-        $this->grants[$proviso->getSegmentLabel()->name] = $proviso;
+        $this->grants[$binding->getLabel()->name] = $binding;
     }
 
-    public function getProviso(OrnSegmentLabel|ProvisoSlot|OrkServices|string $slot): Proviso
+    public function getSegment(OrnSegmentLabel|ServiceCatalog|string $label): OrnSegment
     {
-        $key = ($slot instanceof OrnSegmentLabel ? $slot : OrnSegmentLabel::from($slot))->name;
+        $key = ($label instanceof OrnSegmentLabel ? $label : OrnSegmentLabel::from($label))->name;
 
         return $this->grants[$key];
     }
 
-    public function getProvisos(): array
+    public function getSegments(): array
     {
         return $this->grants;
     }
 
-    protected function buildProviso(OrnSegmentLabel|ProvisoSlot $slot, int|string $id): Proviso
+    protected function buildSegment(OrnSegmentLabel $label, int|string $value): OrnSegment
     {
-        return new Grant($slot, $id);
+        return new Grant($label, $value);
     }
-
 }
