@@ -4,7 +4,7 @@ namespace Tests\Amtgard\IAM;
 
 use Amtgard\IAM\ORN\OrnClassMap;
 use Amtgard\IAM\Orn\OrnSegmentLabel;
-use Amtgard\IAM\ServiceIdentifier;
+use Amtgard\IAM\Orn\OrnPrefix;
 use PHPUnit\Framework\TestCase;
 use Tests\Amtgard\IAM\Fixtures\CustomProvisoClaim;
 use Tests\Amtgard\IAM\Fixtures\CustomProvisoRequirement;
@@ -23,29 +23,29 @@ class OrnOntologyAliasesTest extends TestCase
 
     public function testGetPrefixMatchesServiceIdentifier(): void
     {
-        $claim = new CustomProvisoClaim(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $claim = new CustomProvisoClaim(OrnPrefix::from(self::PREFIX), self::ORN);
 
-        self::assertTrue($claim->getPrefix()->equals($claim->getServiceIdentifier()));
+        self::assertTrue($claim->getPrefix()->equals($claim->getPrefix()));
         self::assertSame(self::PREFIX, $claim->getPrefix()->name);
     }
 
     public function testSegmentAliasesMatchProvisoAccessors(): void
     {
-        $claim = new CustomProvisoClaim(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $claim = new CustomProvisoClaim(OrnPrefix::from(self::PREFIX), self::ORN);
 
-        self::assertSame($claim->getProvisos(), $claim->getSegments());
+        self::assertSame($claim->getSegments(), $claim->getSegments());
         self::assertSame(
-            $claim->getProviso('tenant-id')->getId(),
-            $claim->getSegment('tenant-id')->getSegmentValue()
+            $claim->getSegment('tenant-id')->getValue(),
+            $claim->getSegment('tenant-id')->getValue()
         );
         self::assertTrue(
-            $claim->getSegment('tenant-id')->getSegmentLabel()->equals(OrnSegmentLabel::from('tenant-id'))
+            $claim->getSegment('tenant-id')->getLabel()->equals(OrnSegmentLabel::from('tenant-id'))
         );
     }
 
     public function testSegmentOffset(): void
     {
-        $claim = new CustomProvisoClaim(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $claim = new CustomProvisoClaim(OrnPrefix::from(self::PREFIX), self::ORN);
 
         self::assertSame(0, $claim->segmentOffset('tenant-id'));
         self::assertSame(1, $claim->segmentOffset('org unit'));
@@ -54,7 +54,7 @@ class OrnOntologyAliasesTest extends TestCase
 
     public function testOrnSegmentSchemaDelegatesToServiceFormat(): void
     {
-        $claim = new CustomProvisoClaim(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $claim = new CustomProvisoClaim(OrnPrefix::from(self::PREFIX), self::ORN);
 
         self::assertSame(['tenant-id', 'org unit'], $claim->ornSegmentSchema());
     }

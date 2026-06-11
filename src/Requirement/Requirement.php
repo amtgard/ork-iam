@@ -3,52 +3,48 @@
 namespace Amtgard\IAM\Requirement;
 
 use Amtgard\IAM\Allowance\Claim;
+use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\OrkResourceName;
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Orn\Condition;
+use Amtgard\IAM\Orn\OrnSegment;
 use Amtgard\IAM\Orn\OrnSegmentLabel;
-use Amtgard\IAM\ProvisoSlot;
-use Amtgard\IAM\Proviso\Condition;
-use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\IAM\Resource;
 
 abstract class Requirement extends OrkResourceName
 {
-    /**
-     * @var Condition[]
-     */
-    private array $conditions;
-
+    /** @var Condition[] */
+    private array $conditions = [];
 
     protected function validResource(Resource $resource): bool
     {
-        $r = $resource->resource;
         return isset($this->getResourceMap()[$resource->resource]) &&
             in_array($resource->procedure, $this->getResourceMap($resource->resource));
     }
 
-    public function setProviso(Proviso $proviso)
+    public function setSegment(OrnSegment $binding): void
     {
-        $this->conditions[$proviso->getSegmentLabel()->name] = $proviso;
+        $this->conditions[$binding->getLabel()->name] = $binding;
     }
 
-    public function getProviso(OrnSegmentLabel|ProvisoSlot|OrkServices|string $slot): Proviso
+    public function getSegment(OrnSegmentLabel|ServiceCatalog|string $label): OrnSegment
     {
-        $key = ($slot instanceof OrnSegmentLabel ? $slot : OrnSegmentLabel::from($slot))->name;
+        $key = ($label instanceof OrnSegmentLabel ? $label : OrnSegmentLabel::from($label))->name;
 
         return $this->conditions[$key];
     }
 
-    public function getProvisos(): array
+    public function getSegments(): array
     {
         return $this->conditions;
     }
 
-    public function buildProviso(OrnSegmentLabel|ProvisoSlot $slot, int|string $id): Proviso
+    protected function buildSegment(OrnSegmentLabel $label, int|string $value): OrnSegment
     {
-        return new Condition($slot, $id);
+        return new Condition($label, $value);
     }
 
-    public function allows(Claim $claim): bool {
+    public function allows(Claim $claim): bool
+    {
         if (!$claim->getPrefix()->equals($this->getPrefix())) {
             return false;
         }
@@ -62,21 +58,23 @@ abstract class Requirement extends OrkResourceName
         return false;
     }
 
-    protected function getOrnMatcher(\Amtgard\IAM\ServiceIdentifier $service): string {
-        $matcher = '/^' . preg_quote($service->name, '/') . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
-        return $matcher;
+    protected function getOrnMatcher(\Amtgard\IAM\Orn\OrnPrefix $prefix): string
+    {
+        return '/^' . preg_quote($prefix->name, '/') . ':(\d+:|:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
     }
 
-    function allowsGrant(Proviso $grant): bool {
+    public function allowsGrant(OrnSegment $grant): bool
+    {
         foreach ($this->ornSegmentLabels() as $label) {
-            if ($grant->getSegmentLabel()->equals($label)) {
+            if ($grant->getLabel()->equals($label)) {
                 return $this->getSegment($label)->allows($grant);
             }
         }
-        throw new \InvalidArgumentException("Claim grant could not be matched to a requirement condition.");
+        throw new \InvalidArgumentException('Claim grant could not be matched to a requirement condition.');
     }
 
-    public function resourceComparison(Claim $claim) {
+    public function resourceComparison(Claim $claim)
+    {
         return $claim->getResource()->resource === '*' ||
             ($claim->getResource()->resource === $this->getResource()->resource && $claim->getResource()->procedure === '*') ||
             ($claim->getResource()->resource === $this->getResource()->resource && $claim->getResource()->procedure === $this->getResource()->procedure);

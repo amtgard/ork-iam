@@ -6,7 +6,7 @@ use Amtgard\IAM\Allowance\Policy;
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\ORN\OrnClassMap;
 use Amtgard\IAM\RequirementFactory;
-use Amtgard\IAM\ServiceIdentifier;
+use Amtgard\IAM\Orn\OrnPrefix;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tests\Amtgard\IAM\Fixtures\ExampleClaim;
@@ -36,8 +36,8 @@ class CustomServiceIdentifierTest extends TestCase
         $claim = ClaimFactory::createOrn(self::CUSTOM_ORN);
 
         self::assertInstanceOf(ExampleClaim::class, $claim);
-        self::assertEquals(self::CUSTOM_PREFIX, $claim->getServiceIdentifier()->name);
-        self::assertEquals(1, $claim->getProviso(\Amtgard\IAM\OrkServices::Configuration)->getId());
+        self::assertEquals(self::CUSTOM_PREFIX, $claim->getPrefix()->name);
+        self::assertEquals(1, $claim->getSegment(\Amtgard\IAM\Catalog\ServiceCatalog::Configuration)->getValue());
     }
 
     public function testRequirementFactoryRoundTrip(): void
@@ -45,13 +45,13 @@ class CustomServiceIdentifierTest extends TestCase
         $requirement = RequirementFactory::createOrn(self::CUSTOM_ORN);
 
         self::assertInstanceOf(ExampleRequirement::class, $requirement);
-        self::assertEquals(self::CUSTOM_PREFIX, $requirement->getServiceIdentifier()->name);
+        self::assertEquals(self::CUSTOM_PREFIX, $requirement->getPrefix()->name);
     }
 
     public function testWhenUnregisteredPrefix_thenFactoryThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No claim class registered for service Unregistered.');
+        $this->expectExceptionMessage('No claim class registered for prefix Unregistered.');
 
         ClaimFactory::createOrn('Unregistered:0:Widget/Read');
     }
@@ -59,7 +59,7 @@ class CustomServiceIdentifierTest extends TestCase
     public function testWhenBuiltinNameRegisteredAsCustomString_thenThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Cannot register custom class for built-in service identifier 'Attendance'");
+        $this->expectExceptionMessage("Cannot register custom class for built-in prefix 'Attendance'");
 
         OrnClassMap::registerClaim('Attendance', ExampleClaim::class);
     }
@@ -67,15 +67,15 @@ class CustomServiceIdentifierTest extends TestCase
     public function testValidateCustomServiceNameRejectsBuiltinCollision(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Custom service name 'ORK' collides with a built-in OrkServices identifier.");
+        $this->expectExceptionMessage("Custom prefix 'ORK' collides with a built-in ServiceCatalog entry.");
 
-        OrnClassMap::validateCustomServiceName('ORK');
+        OrnClassMap::validateCustomPrefix('ORK');
     }
 
     public function testPolicyEvaluatesCustomServiceClaim(): void
     {
-        $claim = new ExampleClaim(ServiceIdentifier::from(self::CUSTOM_PREFIX), self::CUSTOM_ORN);
-        $requirement = new ExampleRequirement(ServiceIdentifier::from(self::CUSTOM_PREFIX), self::CUSTOM_ORN);
+        $claim = new ExampleClaim(OrnPrefix::from(self::CUSTOM_PREFIX), self::CUSTOM_ORN);
+        $requirement = new ExampleRequirement(OrnPrefix::from(self::CUSTOM_PREFIX), self::CUSTOM_ORN);
         $policy = new Policy([$claim]);
 
         self::assertTrue($requirement->allows($claim));
@@ -86,7 +86,7 @@ class CustomServiceIdentifierTest extends TestCase
     {
         self::assertSame(
             \Amtgard\IAM\Definitions\ORN\AttendanceClaim::class,
-            OrnClassMap::getClaimClass(\Amtgard\IAM\OrkServices::Attendance)
+            OrnClassMap::getClaimClass(\Amtgard\IAM\Catalog\ServiceCatalog::Attendance)
         );
     }
 }

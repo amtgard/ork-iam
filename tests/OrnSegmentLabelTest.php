@@ -2,9 +2,8 @@
 
 namespace Tests\Amtgard\IAM;
 
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\Orn\OrnSegmentLabel;
-use Amtgard\IAM\ProvisoSlot;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -12,10 +11,10 @@ class OrnSegmentLabelTest extends TestCase
 {
     public function testFromOrkServices(): void
     {
-        $label = OrnSegmentLabel::from(OrkServices::Kingdom);
+        $label = OrnSegmentLabel::from(ServiceCatalog::Kingdom);
 
         self::assertTrue($label->isBuiltin());
-        self::assertSame(OrkServices::Kingdom, $label->toOrkServices());
+        self::assertSame(ServiceCatalog::Kingdom, $label->toCatalogEntry());
         self::assertSame('Kingdom', $label->name);
     }
 
@@ -24,7 +23,7 @@ class OrnSegmentLabelTest extends TestCase
         $label = OrnSegmentLabel::from('Kingdom');
 
         self::assertTrue($label->isBuiltin());
-        self::assertSame(OrkServices::Kingdom, $label->toOrkServices());
+        self::assertSame(ServiceCatalog::Kingdom, $label->toCatalogEntry());
     }
 
     public function testFromCustomStringWithoutRestriction(): void
@@ -32,7 +31,7 @@ class OrnSegmentLabelTest extends TestCase
         $label = OrnSegmentLabel::from('tenant-id');
 
         self::assertFalse($label->isBuiltin());
-        self::assertNull($label->toOrkServices());
+        self::assertNull($label->toCatalogEntry());
         self::assertSame('tenant-id', $label->name);
     }
 
@@ -46,7 +45,7 @@ class OrnSegmentLabelTest extends TestCase
 
     public function testEqualsComparesByName(): void
     {
-        $fromEnum = OrnSegmentLabel::from(OrkServices::Event);
+        $fromEnum = OrnSegmentLabel::from(ServiceCatalog::Event);
         $fromString = OrnSegmentLabel::from('Event');
 
         self::assertTrue($fromEnum->equals($fromString));
@@ -54,7 +53,7 @@ class OrnSegmentLabelTest extends TestCase
 
     public function testOffsetInReturnsZeroBasedIndex(): void
     {
-        $schema = [OrkServices::Configuration, 'tenant-id', 'org unit'];
+        $schema = [ServiceCatalog::Configuration, 'tenant-id', 'org unit'];
         $label = OrnSegmentLabel::from('tenant-id');
 
         self::assertSame(1, $label->offsetIn($schema));
@@ -76,11 +75,4 @@ class OrnSegmentLabelTest extends TestCase
         OrnSegmentLabel::from('');
     }
 
-    public function testProvisoSlotExtendsOrnSegmentLabel(): void
-    {
-        $legacy = ProvisoSlot::from('tenant-id');
-
-        self::assertInstanceOf(OrnSegmentLabel::class, $legacy);
-        self::assertSame('tenant-id', $legacy->name);
-    }
 }

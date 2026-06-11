@@ -5,11 +5,11 @@ namespace Tests\Amtgard\IAM;
 use Amtgard\IAM\Allowance\Policy;
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\ORN\OrnClassMap;
-use Amtgard\IAM\Proviso\Condition;
-use Amtgard\IAM\Proviso\Grant;
+use Amtgard\IAM\Orn\Condition;
+use Amtgard\IAM\Orn\Grant;
 use Amtgard\IAM\Orn\OrnSegmentLabel;
 use Amtgard\IAM\RequirementFactory;
-use Amtgard\IAM\ServiceIdentifier;
+use Amtgard\IAM\Orn\OrnPrefix;
 use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
@@ -33,9 +33,9 @@ class CustomProvisoSlotTest extends TestCase
         $claim = ClaimFactory::createOrn(self::ORN);
 
         self::assertInstanceOf(CustomProvisoClaim::class, $claim);
-        self::assertEquals(42, $claim->getProviso('tenant-id')->getId());
-        self::assertEquals(7, $claim->getProviso('org unit')->getId());
-        self::assertEquals('tenant-id', $claim->getSegment('tenant-id')->getSegmentLabel()->name);
+        self::assertEquals(42, $claim->getSegment('tenant-id')->getValue());
+        self::assertEquals(7, $claim->getSegment('org unit')->getValue());
+        self::assertEquals('tenant-id', $claim->getSegment('tenant-id')->getLabel()->name);
     }
 
     public function testRequirementFactoryParsesCustomProvisoSlots(): void
@@ -43,20 +43,20 @@ class CustomProvisoSlotTest extends TestCase
         $requirement = RequirementFactory::createOrn(self::ORN);
 
         self::assertInstanceOf(CustomProvisoRequirement::class, $requirement);
-        self::assertEquals(42, $requirement->getSegment(OrnSegmentLabel::from('tenant-id'))->getSegmentValue());
+        self::assertEquals(42, $requirement->getSegment(OrnSegmentLabel::from('tenant-id'))->getValue());
     }
 
     public function testBuildOrnRoundTripWithCustomSlots(): void
     {
-        $claim = new CustomProvisoClaim(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $claim = new CustomProvisoClaim(OrnPrefix::from(self::PREFIX), self::ORN);
 
         self::assertSame(self::ORN, $claim->buildOrn());
     }
 
     public function testPolicyEvaluatesCustomProvisoSlots(): void
     {
-        $claim = new CustomProvisoClaim(ServiceIdentifier::from(self::PREFIX), self::ORN);
-        $requirement = new CustomProvisoRequirement(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $claim = new CustomProvisoClaim(OrnPrefix::from(self::PREFIX), self::ORN);
+        $requirement = new CustomProvisoRequirement(OrnPrefix::from(self::PREFIX), self::ORN);
         $policy = new Policy([$claim]);
 
         self::assertTrue($requirement->allows($claim));
@@ -84,31 +84,31 @@ class CustomProvisoSlotTest extends TestCase
         $grant = new Grant('tenant-id', 1);
 
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage("Segment label tenant-id is not a built-in OrkServices catalog entry.");
+        $this->expectExceptionMessage("Segment label tenant-id is not a built-in ServiceCatalog entry.");
 
-        $grant->getService();
+        $grant->toCatalogEntry();
     }
 
     public function testServiceFormatCanMixBuiltinAndCustomSlots(): void
     {
-        $claim = new class(ServiceIdentifier::from(self::PREFIX), 'ProvisoExample:1:2:Widget/Read') extends CustomProvisoClaim {
-            protected function serviceFormat(): array
+        $claim = new class(OrnPrefix::from(self::PREFIX), 'ProvisoExample:1:2:Widget/Read') extends CustomProvisoClaim {
+            public function ornSegmentSchema(): array
             {
-                return [\Amtgard\IAM\OrkServices::Configuration, 'tenant-id'];
+                return [\Amtgard\IAM\Catalog\ServiceCatalog::Configuration, 'tenant-id'];
             }
         };
 
-        self::assertEquals(1, $claim->getProviso(\Amtgard\IAM\OrkServices::Configuration)->getId());
-        self::assertEquals(2, $claim->getProviso('tenant-id')->getId());
+        self::assertEquals(1, $claim->getSegment(\Amtgard\IAM\Catalog\ServiceCatalog::Configuration)->getValue());
+        self::assertEquals(2, $claim->getSegment('tenant-id')->getValue());
         self::assertEquals(
-            \Amtgard\IAM\OrkServices::Configuration,
-            $claim->getProviso(\Amtgard\IAM\OrkServices::Configuration)->getService()
+            \Amtgard\IAM\Catalog\ServiceCatalog::Configuration,
+            $claim->getSegment(\Amtgard\IAM\Catalog\ServiceCatalog::Configuration)->toCatalogEntry()
         );
     }
 
     public function testWhenGrantSlotNotInServiceFormat_thenAllowsGrantThrows(): void
     {
-        $requirement = new CustomProvisoRequirement(ServiceIdentifier::from(self::PREFIX), self::ORN);
+        $requirement = new CustomProvisoRequirement(OrnPrefix::from(self::PREFIX), self::ORN);
         $grant = new Grant('unknown-slot', 1);
 
         $this->expectException(InvalidArgumentException::class);

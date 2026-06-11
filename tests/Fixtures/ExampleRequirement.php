@@ -2,14 +2,14 @@
 
 namespace Tests\Amtgard\IAM\Fixtures;
 
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\Requirement\Requirement;
 
 class ExampleRequirement extends Requirement
 {
-    protected function serviceFormat(): array
+    public function ornSegmentSchema(): array
     {
-        return [OrkServices::Configuration];
+        return [ServiceCatalog::Configuration];
     }
 
     protected function getResourceMap(?string $resource = null): array

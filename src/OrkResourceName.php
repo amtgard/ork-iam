@@ -2,101 +2,56 @@
 
 namespace Amtgard\IAM;
 
+use Amtgard\IAM\Catalog\ServiceCatalog;
+use Amtgard\IAM\Orn\OrnPrefix;
+use Amtgard\IAM\Orn\OrnSegment;
 use Amtgard\IAM\Orn\OrnSegmentLabel;
-use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\Traits\Builder\Builder;
 use Amtgard\Traits\Builder\PostInit;
 
 /**
- * For a given service, each object produced by the service carries an ORN, which is a list of requirements.
- *
  * @see docs/ORN-ONTOLOGY.md
  */
 abstract class OrkResourceName
 {
-
     use Builder;
 
-    protected ServiceIdentifier $service;
+    protected OrnPrefix $prefix;
     protected string $orn;
 
-    public function getPrefix(): ServiceIdentifier
+    public function getPrefix(): OrnPrefix
     {
-        return $this->getServiceIdentifier();
+        return $this->prefix;
     }
 
-    public function getServiceIdentifier(): ServiceIdentifier
+    public function toCatalogEntry(): ServiceCatalog
     {
-        return $this->service;
-    }
-
-    public function getService(): OrkServices
-    {
-        return $this->service->toOrkServices()
+        return $this->prefix->toCatalogEntry()
             ?? throw new \LogicException(
-                "Service prefix {$this->service->name} is not a built-in OrkServices case."
+                "ORN prefix {$this->prefix->name} is not a built-in ServiceCatalog entry."
             );
     }
 
-    public function setSegment(Proviso $binding): void
-    {
-        $this->setProviso($binding);
-    }
+    abstract public function setSegment(OrnSegment $binding): void;
 
-    /**
-     * @deprecated 2.0.0 Use {@see setSegment()} instead.
-     */
-    abstract public function setProviso(Proviso $proviso);
+    abstract public function getSegment(OrnSegmentLabel|ServiceCatalog|string $label): OrnSegment;
 
-    public function getSegment(OrnSegmentLabel|ProvisoSlot|OrkServices|string $label): Proviso
-    {
-        return $this->getProviso($label);
-    }
-
-    /**
-     * @deprecated 2.0.0 Use {@see getSegment()} instead.
-     */
-    abstract public function getProviso(OrnSegmentLabel|ProvisoSlot|OrkServices|string $slot): Proviso;
-
-    /**
-     * @return Proviso[]
-     */
-    public function getSegments(): array
-    {
-        return $this->getProvisos();
-    }
-
-    /**
-     * @return Proviso[]
-     * @deprecated 2.0.0 Use {@see getSegments()} instead.
-     */
-    abstract public function getProvisos(): array;
+    /** @return OrnSegment[] */
+    abstract public function getSegments(): array;
 
     protected Resource $resource;
+
     public function getResource(): Resource
     {
         return $this->resource;
     }
 
     /**
-     * Ordered segment labels defining this ORN type's middle-segment layout.
-     *
-     * @return (OrnSegmentLabel|OrkServices|string)[]
+     * @return (OrnSegmentLabel|ServiceCatalog|string)[]
      */
-    public function ornSegmentSchema(): array
-    {
-        return $this->serviceFormat();
-    }
+    abstract public function ornSegmentSchema(): array;
 
-    /**
-     * @return (OrnSegmentLabel|OrkServices|string)[]
-     * @deprecated 2.0.0 Use {@see ornSegmentSchema()} instead.
-     */
-    abstract protected function serviceFormat(): array;
-
-    /**
-     * @return OrnSegmentLabel[]
-     */
+    /** @return OrnSegmentLabel[] */
     protected function ornSegmentLabels(): array
     {
         return array_map(
@@ -105,67 +60,50 @@ abstract class OrkResourceName
         );
     }
 
-    /**
-     * @return OrnSegmentLabel[]
-     * @deprecated 2.0.0 Use {@see ornSegmentLabels()} instead.
-     */
-    protected function provisoSlots(): array
-    {
-        return $this->ornSegmentLabels();
-    }
-
-    public function segmentOffset(OrnSegmentLabel|ProvisoSlot|OrkServices|string $label): int
+    public function segmentOffset(OrnSegmentLabel|ServiceCatalog|string $label): int
     {
         $segmentLabel = $label instanceof OrnSegmentLabel ? $label : OrnSegmentLabel::from($label);
 
         return $segmentLabel->offsetIn($this->ornSegmentSchema());
     }
 
-    public function buildOrn(): string {
-        return $this->service->name . ':' .
+    public function buildOrn(): string
+    {
+        return $this->prefix->name . ':' .
             implode(':',
                 array_map(function (OrnSegmentLabel $label) {
-                    $id = current(array_filter($this->getProvisos(),
-                        fn ($binding) => $binding->getSegmentLabel()->equals($label)
-                    ))->getSegmentValue();
-                    return is_null($id) ? '' : $id;
+                    $value = current(array_filter(
+                        $this->getSegments(),
+                        fn ($binding) => $binding->getLabel()->equals($label)
+                    ))->getValue();
+
+                    return is_null($value) ? '' : $value;
                 }, $this->ornSegmentLabels())) . ':' . $this->resource->toString();
     }
 
-    private function parseOrn(string $orn): array {
+    private function parseOrn(string $orn): array
+    {
         try {
             return array_map(function (OrnSegmentLabel $label, string $value) {
                 return $this->buildSegment($label, $value);
             }, $this->ornSegmentLabels(), explode(':', $orn, -1));
         } catch (\TypeError $e) {
-            throw new \InvalidArgumentException("Invalid proviso set.");
+            throw new \InvalidArgumentException('Invalid segment binding set.');
         }
     }
 
-    protected function buildSegment(OrnSegmentLabel $label, string|int $value): Proviso
+    abstract protected function buildSegment(OrnSegmentLabel $label, string|int $value): OrnSegment;
+
+    protected function getOrnMatcher(OrnPrefix $prefix): string
     {
-        return $this->buildProviso($label, $value);
+        return '/^' . preg_quote($prefix->name, '/') . ':(\d+:|:|\*:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
     }
 
-    /**
-     * @deprecated 2.0.0 Use {@see buildSegment()} instead.
-     */
-    abstract protected function buildProviso(OrnSegmentLabel|ProvisoSlot $slot, string|int $id): Proviso;
-
-    protected function getOrnMatcher(ServiceIdentifier $service): string {
-        $matcher = '/^' . preg_quote($service->name, '/') . ':(\d+:|:|\*:)+((\w+|\*)|((\w+)\/(\w+|\*)))$/';
-        return $matcher;
+    protected function validOrnFormat(OrnPrefix $prefix, $orn): bool
+    {
+        return preg_match($this->getOrnMatcher($prefix), $orn);
     }
 
-    protected function validOrnFormat(ServiceIdentifier $service, $orn): bool {
-        $matcher = $this->getOrnMatcher($service);
-        return preg_match($matcher, $orn);
-    }
-
-    /**
-     * @param String $resource
-     * @return array
-     */
     protected abstract function getResourceMap(String $resource = null): array;
 
     protected abstract function validResource(Resource $resource): bool;
@@ -175,44 +113,38 @@ abstract class OrkResourceName
         return count($bindings) === count($this->ornSegmentLabels());
     }
 
-    /**
-     * @deprecated 2.0.0 Use {@see validSegmentBindings()} instead.
-     */
-    protected function validProvisos(array $provisos): bool {
-        return $this->validSegmentBindings($provisos);
-    }
-
     #[PostInit]
-    public function init() {
+    public function init()
+    {
         $ornParts = explode(':', $this->orn, 2);
-        $this->service = ServiceIdentifier::from($ornParts[0]);
-        if (!$this->validOrnFormat($this->service, $this->orn)) {
-            throw new \InvalidArgumentException("Invalid orn format.");
+        $this->prefix = OrnPrefix::from($ornParts[0]);
+        if (!$this->validOrnFormat($this->prefix, $this->orn)) {
+            throw new \InvalidArgumentException('Invalid orn format.');
         }
-        $ornProvisos = explode(':', $ornParts[1]);
-        $this->resource = new Resource(end($ornProvisos));
+        $ornSegments = explode(':', $ornParts[1]);
+        $this->resource = new Resource(end($ornSegments));
         if (!$this->validResource($this->resource)) {
-            throw new \InvalidArgumentException("Invalid resource definition.");
+            throw new \InvalidArgumentException('Invalid resource definition.');
         }
         $bindings = $this->parseOrn($ornParts[1]);
         if (!$this->validSegmentBindings($bindings)) {
-            throw new \InvalidArgumentException("Invalid proviso set.");
+            throw new \InvalidArgumentException('Invalid segment binding set.');
         }
         foreach ($bindings as $binding) {
             $this->setSegment($binding);
         }
     }
 
-    public function __construct(ServiceIdentifier|OrkServices|string $service, string $orn) {
-        if ($service instanceof ServiceIdentifier) {
-            $this->service = $service;
-        } elseif ($service instanceof OrkServices) {
-            $this->service = ServiceIdentifier::from($service->value);
+    public function __construct(OrnPrefix|ServiceCatalog|string $prefix, string $orn)
+    {
+        if ($prefix instanceof OrnPrefix) {
+            $this->prefix = $prefix;
+        } elseif ($prefix instanceof ServiceCatalog) {
+            $this->prefix = OrnPrefix::from($prefix->value);
         } else {
-            $this->service = ServiceIdentifier::from($service);
+            $this->prefix = OrnPrefix::from($prefix);
         }
         $this->orn = $orn;
         $this->init();
     }
-
 }

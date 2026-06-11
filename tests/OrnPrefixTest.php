@@ -2,35 +2,35 @@
 
 namespace Tests\Amtgard\IAM;
 
-use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\ServiceIdentifier;
+use Amtgard\IAM\Catalog\ServiceCatalog;
+use Amtgard\IAM\Orn\OrnPrefix;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class ServiceIdentifierTest extends TestCase
+class OrnPrefixTest extends TestCase
 {
     public function testFromBuiltinNormalizesToEnum(): void
     {
-        $id = ServiceIdentifier::from('Attendance');
+        $id = OrnPrefix::from('Attendance');
 
         self::assertTrue($id->isBuiltin());
-        self::assertEquals(OrkServices::Attendance, $id->toOrkServices());
+        self::assertEquals(ServiceCatalog::Attendance, $id->toCatalogEntry());
         self::assertEquals('Attendance', $id->name);
     }
 
     public function testFromCustomIdentifier(): void
     {
-        $id = ServiceIdentifier::from('Example');
+        $id = OrnPrefix::from('Example');
 
         self::assertFalse($id->isBuiltin());
-        self::assertNull($id->toOrkServices());
+        self::assertNull($id->toCatalogEntry());
         self::assertEquals('Example', (string) $id);
     }
 
     public function testEqualsComparesByName(): void
     {
-        $a = ServiceIdentifier::from('Example');
-        $b = ServiceIdentifier::from('Example');
+        $a = OrnPrefix::from('Example');
+        $b = OrnPrefix::from('Example');
 
         self::assertTrue($a->equals($b));
     }
@@ -38,16 +38,16 @@ class ServiceIdentifierTest extends TestCase
     public function testWhenLowercasePrefix_thenThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid custom service identifier 'example'");
+        $this->expectExceptionMessage("Invalid custom ORN prefix 'example'");
 
-        ServiceIdentifier::from('example');
+        OrnPrefix::from('example');
     }
 
     public function testWhenEmptyPrefix_thenThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Service identifier cannot be empty.');
+        $this->expectExceptionMessage('ORN prefix cannot be empty.');
 
-        ServiceIdentifier::from('');
+        OrnPrefix::from('');
     }
 }

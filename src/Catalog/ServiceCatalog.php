@@ -1,17 +1,14 @@
 <?php
 
-namespace Amtgard\IAM;
+namespace Amtgard\IAM\Catalog;
 
 /**
  * Catalog of built-in ORN prefix and segment label names.
  *
- * Renamed to {@see \Amtgard\IAM\Catalog\ServiceCatalog} in 2.0.0.
- *
  * @see docs/ORN-ONTOLOGY.md
  */
-enum OrkServices: string
+enum ServiceCatalog: string
 {
-    // ORK Services
     case ORK = 'ORK';
     case Configuration = 'Configuration';
     case Mundane = 'Mundane';
@@ -29,14 +26,10 @@ enum OrkServices: string
     case Officer = 'Officer';
     case Recommendations = 'Recommendations';
     case Tournament = 'Tournament';
-
-    // Applications
     case Idp = 'Idp';
     case Documents = 'Documents';
     case Forums = 'Forums';
     case Media = 'Media';
     case Errata = 'Errata';
-
-    // Custom
     case Application = 'Application';
 }

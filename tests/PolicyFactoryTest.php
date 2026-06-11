@@ -4,7 +4,7 @@ namespace Tests\Amtgard\IAM;
 
 use Amtgard\IAM\Allowance\Policy;
 use Amtgard\IAM\Definitions\ORN\OrkRequirement;
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\PolicyFactory;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +19,7 @@ class PolicyFactoryTest extends TestCase
 
         self::assertInstanceOf(Policy::class, $policy);
         self::assertTrue($policy->isAuthorized(
-            new OrkRequirement(OrkServices::ORK, 'ORK:1:7:8:9:10:ORK/AddKingdom')
+            new OrkRequirement(ServiceCatalog::ORK, 'ORK:1:7:8:9:10:ORK/AddKingdom')
         ));
     }
 }

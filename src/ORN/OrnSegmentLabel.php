@@ -2,24 +2,22 @@
 
 namespace Amtgard\IAM\Orn;
 
-use Amtgard\IAM\OrkServices;
+use Amtgard\IAM\Catalog\ServiceCatalog;
 
 /**
  * Label for one middle segment in an ORN segment schema.
- *
- * @see OrkResourceName::ornSegmentSchema()
  */
 readonly class OrnSegmentLabel
 {
     public function __construct(
         public string $name,
-        private ?OrkServices $orkService = null,
+        private ?ServiceCatalog $catalogEntry = null,
     ) {
     }
 
-    public static function from(string|OrkServices $label): static
+    public static function from(string|ServiceCatalog $label): static
     {
-        if ($label instanceof OrkServices) {
+        if ($label instanceof ServiceCatalog) {
             return new static($label->value, $label);
         }
 
@@ -27,7 +25,7 @@ readonly class OrnSegmentLabel
             throw new \InvalidArgumentException('ORN segment label cannot be empty.');
         }
 
-        $builtin = OrkServices::tryFrom($label);
+        $builtin = ServiceCatalog::tryFrom($label);
         if ($builtin !== null) {
             return new static($builtin->value, $builtin);
         }
@@ -37,12 +35,12 @@ readonly class OrnSegmentLabel
 
     public function isBuiltin(): bool
     {
-        return $this->orkService !== null;
+        return $this->catalogEntry !== null;
     }
 
-    public function toOrkServices(): ?OrkServices
+    public function toCatalogEntry(): ?ServiceCatalog
     {
-        return $this->orkService;
+        return $this->catalogEntry;
     }
 
     public function equals(self $other): bool
@@ -51,9 +49,7 @@ readonly class OrnSegmentLabel
     }
 
     /**
-     * Zero-based position of this label in the given segment schema.
-     *
-     * @param (self|OrkServices|string)[] $schema
+     * @param (self|ServiceCatalog|string)[] $schema
      */
     public function offsetIn(array $schema): int
     {

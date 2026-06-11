@@ -1,0 +1,63 @@
+# Migrating to ork-iam 2.0.0
+
+2.0.0 aligns the public API with the [ORN ontology](ORN-ONTOLOGY.md). All 1.x names listed below are removed.
+
+## Type renames
+
+| 1.x | 2.0 |
+|-----|-----|
+| `Amtgard\IAM\OrkServices` | `Amtgard\IAM\Catalog\ServiceCatalog` |
+| `Amtgard\IAM\ServiceIdentifier` | `Amtgard\IAM\Orn\OrnPrefix` |
+| `Amtgard\IAM\ProvisoSlot` | *(removed)* → `Orn\OrnSegmentLabel` |
+| `Amtgard\IAM\Proviso\Proviso` | `Amtgard\IAM\Orn\OrnSegment` |
+| `Amtgard\IAM\Proviso\Grant` | `Amtgard\IAM\Orn\Grant` |
+| `Amtgard\IAM\Proviso\Condition` | `Amtgard\IAM\Orn\Condition` |
+
+## Method renames
+
+| 1.x | 2.0 |
+|-----|-----|
+| `getServiceIdentifier()` | `getPrefix()` |
+| `serviceFormat()` | `ornSegmentSchema()` |
+| `provisoSlots()` | `ornSegmentLabels()` |
+| `getProviso()` / `getProvisos()` / `setProviso()` | `getSegment()` / `getSegments()` / `setSegment()` |
+| `buildProviso()` | `buildSegment()` |
+| `getSlot()` / `setSlot()` | `getLabel()` / `setLabel()` |
+| `getId()` / `setId()` | `getValue()` / `setValue()` |
+| `getSegmentLabel()` | `getLabel()` |
+| `getSegmentValue()` | `getValue()` |
+| `toOrkServices()` | `toCatalogEntry()` |
+| `OrnClassMap::validateCustomServiceName()` | `OrnClassMap::validateCustomPrefix()` |
+
+## Claim / requirement authors
+
+```php
+// 1.x
+protected function serviceFormat(): array
+{
+    return [OrkServices::Configuration, 'tenant-id'];
+}
+
+// 2.0
+protected function ornSegmentSchema(): array
+{
+    return [ServiceCatalog::Configuration, 'tenant-id'];
+}
+```
+
+## `ork-iam-orn-definitions` companion release
+
+Release `amtgard/ork-iam-orn-definitions` 2.0.0 alongside `ork-iam` 2.0.0:
+
+- Replace `OrkServices` with `ServiceCatalog`
+- Rename `serviceFormat()` to `ornSegmentSchema()` on all `*Format` classes
+- Update `register.php` enum references
+
+## Branch layout
+
+| Branch | Base | Purpose |
+|--------|------|---------|
+| `feature/orn-segment-ontology-prep` | `main` | 1.x non-breaking aliases + custom segment labels |
+| `feature/2.0-ontology` | `feature/orn-segment-ontology-prep` | Breaking 2.0.0 rename (this document) |
+
+Merge order: prep branch → `main` (1.3.x), then 2.0 branch when `ork-iam-orn-definitions` 2.0 is ready.
