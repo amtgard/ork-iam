@@ -32,6 +32,22 @@ For local development:
 composer install
 ```
 
+### Version lines
+
+| Line | Branch | Composer constraint | Latest tag |
+|------|--------|---------------------|------------|
+| 1.x (maintenance) | `1.x` | `"amtgard/ork-iam": "^1.3"` | `v1.3.0` |
+| 2.x (current) | `main` | `"amtgard/ork-iam": "^2.0"` | `v2.0.0` |
+
+Pin `^1.3` for IDP and existing integrators on the 1.x API. Use `^2.0` for the current ontology API (`ServiceCatalog`, `ornSegmentSchema()`, …).
+
+### Branching
+
+- **1.x fixes and minors** — branch from `1.x`, name `feature/1.x/<name>`, open PRs against `1.x`. Tag releases `v1.4.0`, `v1.5.0`, … on `1.x`.
+- **2.x features** — branch from `main`, name `feature/<name>`, open PRs against `main`. Tag releases `v2.1.0`, `v2.2.0`, … on `main`.
+
+Do not use `1.x/feature/...` — it conflicts with the `1.x` branch ref.
+
 ## Introduction
 
 ORK IAM is a policy document system that allows for testing `claims` against `requirements`. `claims` may be bundled into `policies`. If any claim in a policy is accepted by the requirement on a given object, then the policy is accepted by the requirement; otherwise, it is rejected.
