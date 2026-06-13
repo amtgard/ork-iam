@@ -64,4 +64,29 @@ class PolicyTest extends TestCase
 
         self::assertFalse($policyA->is($policyB));
     }
+
+    public function testMergeDedupesByCanonicalOrn(): void
+    {
+        $policyA = new Policy([
+            new OrkClaim(ServiceCatalog::ORK, "ORK:1:::::*"),
+            new OrkClaim(ServiceCatalog::ORK, "ORK:2:::::*"),
+        ]);
+        $policyB = new Policy([new OrkClaim(ServiceCatalog::ORK, "ORK:1:::::*")]);
+
+        $merged = $policyA->merge($policyB);
+
+        self::assertTrue($merged->is($policyA));
+        self::assertCount(2, $merged->getClaims());
+    }
+
+    public function testWithClaimsDedupesAndReturnsClaims(): void
+    {
+        $claim1 = new OrkClaim(ServiceCatalog::ORK, "ORK:1:::::*");
+        $claim2 = new OrkClaim(ServiceCatalog::ORK, "ORK:2:::::*");
+        $duplicate = new OrkClaim(ServiceCatalog::ORK, "ORK:1:::::*");
+
+        $policy = Policy::withClaims([$claim1, $claim2, $duplicate]);
+
+        self::assertCount(2, $policy->getClaims());
+    }
 }

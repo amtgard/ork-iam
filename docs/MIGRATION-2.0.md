@@ -61,3 +61,25 @@ Release `amtgard/ork-iam-orn-definitions` 2.0.0 alongside `ork-iam` 2.0.0:
 | `feature/2.0-ontology` | `feature/orn-segment-ontology-prep` | Breaking 2.0.0 rename (this document) |
 
 Merge order: prep branch → `main` (1.3.x), then 2.0 branch when `ork-iam-orn-definitions` 2.0 is ready.
+
+## Upgrading from 1.4 to 2.1 (claim composition)
+
+v2.1.0 ports the v1.4.0 claim-composition APIs onto the 2.0 ontology. Authorization semantics are unchanged; only type names differ.
+
+```php
+// Prefix / catalog
+OrkServices::Attendance           → ServiceCatalog::Attendance
+ServiceIdentifier::from($s)       → OrnPrefix::from($s)
+$claim->getServiceIdentifier()     → $claim->getPrefix()
+
+// Segments
+$claim->getProviso($label)        → $claim->getSegment($label)
+$proviso->getId()                  → $segment->getValue()
+$proviso->getSegmentLabel()        → $segment->getLabel()
+
+// composer.json
+"amtgard/ork-iam": "^1.4"         → "^2.1"
+"amtgard/ork-iam-orn-definitions": "^1.x" → "^2.0"
+```
+
+`ClaimBuilder`, `PolicyBuilder`, and `PolicyDocument` method names are unchanged. `PolicyDocument::fromVerifiedJwt()` and `fromVerifiedPayload()` behave the same as on 1.4.

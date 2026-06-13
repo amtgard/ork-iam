@@ -37,4 +37,30 @@ class Policy
     public function is(Policy $target): bool {
         return $this->toJson() === $target->toJson();
     }
+
+    /**
+     * @return Claim[]
+     */
+    public function getClaims(): array
+    {
+        return array_values($this->claims);
+    }
+
+    public function merge(Policy $other): Policy
+    {
+        return self::withClaims(array_merge($this->claims, $other->claims));
+    }
+
+    /**
+     * @param Claim[] $claims
+     */
+    public static function withClaims(array $claims): Policy
+    {
+        $deduped = [];
+        foreach ($claims as $claim) {
+            $deduped[$claim->buildOrn()] = $claim;
+        }
+
+        return new Policy(array_values($deduped));
+    }
 }
