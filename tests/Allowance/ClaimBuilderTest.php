@@ -7,7 +7,7 @@ use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\Definitions\ORN\AttendanceClaim;
 use Amtgard\IAM\ORN\OrnClassMap;
-use Amtgard\IAM\Orn\OrnPrefix;
+use Amtgard\IAM\ORN\OrnPrefix;
 use PHPUnit\Framework\TestCase;
 use Tests\Amtgard\IAM\Fixtures\CustomProvisoClaim;
 

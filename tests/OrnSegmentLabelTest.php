@@ -3,7 +3,7 @@
 namespace Tests\Amtgard\IAM;
 
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

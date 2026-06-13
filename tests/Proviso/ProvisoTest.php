@@ -3,8 +3,8 @@
 namespace Tests\Amtgard\IAM\Proviso;
 
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\Condition;
-use Amtgard\IAM\Orn\Grant;
+use Amtgard\IAM\ORN\Condition;
+use Amtgard\IAM\ORN\Grant;
 use LogicException;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;

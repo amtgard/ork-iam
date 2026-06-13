@@ -7,11 +7,11 @@
 | 1.x | 2.0 |
 |-----|-----|
 | `Amtgard\IAM\OrkServices` | `Amtgard\IAM\Catalog\ServiceCatalog` |
-| `Amtgard\IAM\ServiceIdentifier` | `Amtgard\IAM\Orn\OrnPrefix` |
+| `Amtgard\IAM\ServiceIdentifier` | `Amtgard\IAM\ORN\OrnPrefix` |
 | `Amtgard\IAM\ProvisoSlot` | *(removed)* → `Orn\OrnSegmentLabel` |
-| `Amtgard\IAM\Proviso\Proviso` | `Amtgard\IAM\Orn\OrnSegment` |
-| `Amtgard\IAM\Proviso\Grant` | `Amtgard\IAM\Orn\Grant` |
-| `Amtgard\IAM\Proviso\Condition` | `Amtgard\IAM\Orn\Condition` |
+| `Amtgard\IAM\Proviso\Proviso` | `Amtgard\IAM\ORN\OrnSegment` |
+| `Amtgard\IAM\Proviso\Grant` | `Amtgard\IAM\ORN\Grant` |
+| `Amtgard\IAM\Proviso\Condition` | `Amtgard\IAM\ORN\Condition` |
 
 ## Method renames
 

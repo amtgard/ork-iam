@@ -6,7 +6,7 @@ use Amtgard\IAM\Definitions\ORN\AttendanceClaim;
 use Amtgard\IAM\Definitions\ORN\AttendanceRequirement;
 use Amtgard\IAM\Definitions\ORN\OrkClaim;
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\Condition;
+use Amtgard\IAM\ORN\Condition;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

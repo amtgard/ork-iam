@@ -3,9 +3,9 @@
 namespace Amtgard\IAM;
 
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\OrnPrefix;
-use Amtgard\IAM\Orn\OrnSegment;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnPrefix;
+use Amtgard\IAM\ORN\OrnSegment;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\Traits\Builder\Builder;
 use Amtgard\Traits\Builder\PostInit;
 
