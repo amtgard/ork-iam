@@ -1,7 +1,7 @@
 {
   "name"  : "amtgard/ork-iam",
   "type"  : "library",
-  "homepage": "https://github.com/amtgard/active-record-orm",
+  "homepage": "https://github.com/amtgard/ork-iam",
   "license" : "MIT",
   "description": "Amtgard ORK IAM",
   "repositories": [
@@ -37,5 +37,10 @@
   },
   "bin": [
     "./bin/"
-  ]
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-main": "2.1-dev"
+    }
+  }
 }
