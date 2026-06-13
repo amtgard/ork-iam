@@ -36,10 +36,10 @@ composer install
 
 | Line | Branch | Composer constraint | Latest tag |
 |------|--------|---------------------|------------|
-| 1.x (maintenance) | `1.x` | `"amtgard/ork-iam": "^1.3"` | `v1.3.0` |
+| 1.x (maintenance) | `1.x` | `"amtgard/ork-iam": "^1.4"` | `v1.4.0` |
 | 2.x (current) | `main` | `"amtgard/ork-iam": "^2.0"` | `v2.0.0` |
 
-Pin `^1.3` for IDP and existing integrators on the 1.x API. Use `^2.0` for the current ontology API (`ServiceCatalog`, `ornSegmentSchema()`, …).
+Pin `^1.4` for IDP and existing integrators on the 1.x API. Use `^2.0` for the current ontology API (`ServiceCatalog`, `ornSegmentSchema()`, …).
 
 ### Branching
 
@@ -205,6 +205,62 @@ if ($policy->isAuthorized($requirement)) {
     // Policy satisfies the requirement
 }
 ```
+
+### Claim and policy composition (v1.4.0)
+
+Build claims fluently instead of hand-authoring ORN strings:
+
+```php
+use Amtgard\IAM\Allowance\ClaimBuilder;
+use Amtgard\IAM\OrkServices;
+
+$claim = ClaimBuilder::forPrefix(OrkServices::Attendance)
+    ->segment(OrkServices::Configuration, 1)
+    ->segment(OrkServices::Kingdom, 42)
+    ->resource('ORK', 'AddAttendance')
+    ->build();
+```
+
+Compose policies from ORN lines or claims; merge dedupes by canonical ORN string:
+
+```php
+use Amtgard\IAM\Allowance\PolicyBuilder;
+
+$policy = PolicyBuilder::create()
+    ->addOrn('ORK:1:::::*')
+    ->addClaim($claim)
+    ->build();
+
+$combined = PolicyBuilder::from($policyA)->merge($policyB)->build();
+```
+
+`PolicyFactory::fromOrn()` remains available and delegates to `PolicyBuilder` internally.
+
+### IDP / JWT integration
+
+After JWT signature verification, build the effective policy from signed claims — do not merge untrusted partial policies client-side:
+
+```php
+use Amtgard\IAM\Allowance\PolicyDocument;
+
+$doc = PolicyDocument::fromVerifiedJwt($verifiedPayload);
+$policy = $doc->policy();
+
+if ($policy->isAuthorized($requirement)) {
+    // authorized
+}
+
+$blob = $doc->integratorDocument(); // optional opaque integrator config; not used by isAuthorized()
+```
+
+Expected JWT payload shape:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `policy_lines` | `string[]` | ORN lines (global + integrator-specific), all ORK-namespace |
+| `integrator_document` | `array` (optional) | Application-defined blob; exposed via getter only |
+
+`PolicyDocument::fromOrnList()`, `fromJson()`, and `fromVerifiedPayload()` are also available for tests and server-side assembly of trusted fragments.
 
 ## Service identifiers
 
