@@ -3,7 +3,7 @@
 namespace Tests\Amtgard\IAM;
 
 use Amtgard\IAM\ORN\OrnClassMap;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\ServiceIdentifier;
 use PHPUnit\Framework\TestCase;
 use Tests\Amtgard\IAM\Fixtures\CustomProvisoClaim;

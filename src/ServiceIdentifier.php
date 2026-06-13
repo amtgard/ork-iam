@@ -5,7 +5,7 @@ namespace Amtgard\IAM;
 /**
  * ORN prefix — the leading segment identifying who owns the ORN.
  *
- * Renamed to {@see \Amtgard\IAM\Orn\OrnPrefix} in 2.0.0.
+ * Renamed to {@see \Amtgard\IAM\ORN\OrnPrefix} in 2.0.0.
  *
  * @see docs/ORN-ONTOLOGY.md
  */

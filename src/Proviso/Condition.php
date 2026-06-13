@@ -9,7 +9,7 @@ namespace Amtgard\IAM\Proviso;
  */
 
 use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 
 class Condition extends Proviso
 {
