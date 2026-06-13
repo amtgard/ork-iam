@@ -4,7 +4,7 @@ namespace Amtgard\IAM\Allowance;
 
 use Amtgard\IAM\OrkResourceName;
 use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\ProvisoSlot;
 use Amtgard\IAM\Proviso\Grant;
 use Amtgard\IAM\Proviso\Proviso;

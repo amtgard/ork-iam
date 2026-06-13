@@ -5,7 +5,7 @@ namespace Amtgard\IAM\Allowance;
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\OrkServices;
 use Amtgard\IAM\ORN\OrnClassMap;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\ProvisoSlot;
 use Amtgard\IAM\ServiceIdentifier;
 

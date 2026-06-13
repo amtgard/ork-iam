@@ -7,7 +7,7 @@ use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\ORN\OrnClassMap;
 use Amtgard\IAM\Proviso\Condition;
 use Amtgard\IAM\Proviso\Grant;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\RequirementFactory;
 use Amtgard\IAM\ServiceIdentifier;
 use InvalidArgumentException;

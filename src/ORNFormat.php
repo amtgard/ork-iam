@@ -5,7 +5,7 @@ namespace Amtgard\IAM;
 abstract class ORNFormat
 {
     /**
-     * @return (\Amtgard\IAM\Orn\OrnSegmentLabel|\Amtgard\IAM\OrkServices|string)[]
+     * @return (\Amtgard\IAM\ORN\OrnSegmentLabel|\Amtgard\IAM\OrkServices|string)[]
      */
     public static function ornSegmentSchema(): array
     {
@@ -13,7 +13,7 @@ abstract class ORNFormat
     }
 
     /**
-     * @return (\Amtgard\IAM\Orn\OrnSegmentLabel|\Amtgard\IAM\OrkServices|string)[]
+     * @return (\Amtgard\IAM\ORN\OrnSegmentLabel|\Amtgard\IAM\OrkServices|string)[]
      * @deprecated 2.0.0 Use {@see ornSegmentSchema()} instead.
      */
     public static abstract function serviceFormat(): array;

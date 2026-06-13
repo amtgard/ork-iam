@@ -3,13 +3,13 @@
 namespace Amtgard\IAM\Proviso;
 
 use Amtgard\IAM\OrkServices;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\ProvisoSlot;
 
 /**
  * Label + value binding for one ORN middle segment.
  *
- * @deprecated 2.0.0 Renamed to {@see \Amtgard\IAM\Orn\OrnSegment}.
+ * @deprecated 2.0.0 Renamed to {@see \Amtgard\IAM\ORN\OrnSegment}.
  */
 abstract class Proviso
 {

@@ -2,7 +2,7 @@
 
 namespace Amtgard\IAM\Proviso;
 
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 
 class Grant extends Proviso {
     private OrnSegmentLabel $slot;

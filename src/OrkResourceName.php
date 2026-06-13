@@ -2,7 +2,7 @@
 
 namespace Amtgard\IAM;
 
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\Proviso\Proviso;
 use Amtgard\Traits\Builder\Builder;
 use Amtgard\Traits\Builder\PostInit;
