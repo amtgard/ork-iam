@@ -3,7 +3,7 @@
 namespace Amtgard\IAM;
 
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 
 abstract class ORNFormat
 {

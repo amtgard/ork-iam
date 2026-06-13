@@ -3,7 +3,7 @@
 namespace Tests\Amtgard\IAM;
 
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\OrnPrefix;
+use Amtgard\IAM\ORN\OrnPrefix;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

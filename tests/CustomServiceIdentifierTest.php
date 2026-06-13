@@ -6,7 +6,7 @@ use Amtgard\IAM\Allowance\Policy;
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\ORN\OrnClassMap;
 use Amtgard\IAM\RequirementFactory;
-use Amtgard\IAM\Orn\OrnPrefix;
+use Amtgard\IAM\ORN\OrnPrefix;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Tests\Amtgard\IAM\Fixtures\ExampleClaim;

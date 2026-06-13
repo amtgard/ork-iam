@@ -5,7 +5,7 @@ namespace Tests\Amtgard\IAM\ORN;
 use Amtgard\IAM\Definitions\ORN\OrkClaim;
 use Amtgard\IAM\Definitions\ORN\OrkRequirement;
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\Grant;
+use Amtgard\IAM\ORN\Grant;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

@@ -5,8 +5,8 @@ namespace Amtgard\IAM\Allowance;
 use Amtgard\IAM\Catalog\ServiceCatalog;
 use Amtgard\IAM\ClaimFactory;
 use Amtgard\IAM\ORN\OrnClassMap;
-use Amtgard\IAM\Orn\OrnPrefix;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\OrnPrefix;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 
 class ClaimBuilder
 {

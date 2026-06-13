@@ -4,9 +4,9 @@ namespace Amtgard\IAM\Allowance;
 
 use Amtgard\IAM\OrkResourceName;
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\Grant;
-use Amtgard\IAM\Orn\OrnSegment;
-use Amtgard\IAM\Orn\OrnSegmentLabel;
+use Amtgard\IAM\ORN\Grant;
+use Amtgard\IAM\ORN\OrnSegment;
+use Amtgard\IAM\ORN\OrnSegmentLabel;
 use Amtgard\IAM\Resource;
 use Amtgard\Traits\Builder\Builder;
 

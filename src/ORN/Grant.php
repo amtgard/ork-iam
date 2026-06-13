@@ -1,6 +1,6 @@
 <?php
 
-namespace Amtgard\IAM\Orn;
+namespace Amtgard\IAM\ORN;
 
 class Grant extends OrnSegment
 {

@@ -3,7 +3,7 @@
 namespace Amtgard\IAM\ORN;
 
 use Amtgard\IAM\Catalog\ServiceCatalog;
-use Amtgard\IAM\Orn\OrnPrefix;
+use Amtgard\IAM\ORN\OrnPrefix;
 
 class OrnClassMap
 {
