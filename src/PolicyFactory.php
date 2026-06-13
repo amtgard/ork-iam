@@ -2,15 +2,16 @@
 
 namespace Amtgard\IAM;
 
-use Amtgard\IAM\Allowance\Policy;
+use Amtgard\IAM\Allowance\PolicyBuilder;
 
 class PolicyFactory
 {
     public static function fromOrn(array $orns) {
-        $ornSet = [];
+        $builder = PolicyBuilder::create();
         foreach ($orns as $orn) {
-            $ornSet[] = ClaimFactory::createOrn($orn);
+            $builder->addOrn($orn);
         }
-        return new Policy($ornSet);
+
+        return $builder->build();
     }
 }
